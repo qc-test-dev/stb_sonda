@@ -1,0 +1,6 @@
+<h1>Gestión de Usuarios</h1>
+<ul>
+    {% for user in users %}
+    <li>{{ user.username }} - <a href="/accounts/delete/{{ user.id }}/">Eliminar</a></li>
+    {% endfor %}
+</ul>
