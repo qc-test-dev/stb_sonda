@@ -1,7 +1,17 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
+<head>
+    <title>STB Devices</title>
+</head>
 <body>
-    <h1>{{ message }}</h1>
-    <a href="/accounts/logout/">Cerrar Sesión</a>
+    <h1>Connected Devices</h1>
+    <ul>
+        {% for device in devices %}
+            <li>
+                <a href="{% url 'connect_device' device.ip %}">{{ device.name }} ({{ device.ip }})</a>
+            </li>
+        {% endfor %}
+    </ul>
 </body>
 </html>

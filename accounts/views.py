@@ -13,6 +13,7 @@ from django.urls import reverse_lazy
 class CustomLoginView(LoginView):
     template_name = 'accounts/login.html'
     redirect_authenticated_user = True
+    success_url = '/'
 
 class CustomLogoutView(LogoutView):
     next_page = reverse_lazy('login')
