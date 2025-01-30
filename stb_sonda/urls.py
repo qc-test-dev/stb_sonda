@@ -15,15 +15,18 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from .views import home, connect_device, live_view, proxy_to_ws_scrcpy
 from django.conf import settings
 from django.conf.urls.static import static
+from . import views
 
 urlpatterns = [
+
     path('admin/', admin.site.urls),
+    # Nueva vista Home
+    path('home/', views.home, name='home'),
+    # Vista para Logout
+    
     path('accounts/', include('accounts.urls')),
-    path('', home, name='home'),
-    path('connect/<str:ip>/', connect_device, name='connect_device'),
-    path('live/<str:ip>/', live_view, name='live_view'),
-    path('stream/<str:ip_port>/', proxy_to_ws_scrcpy, name='proxy_to_ws_scrcpy'),
+    # Ruta por defecto
+    path('', views.home, name='home'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,17 +1,109 @@
 {% load static %}
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-    <title>STB Devices</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de STBs</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f7;
+            margin: 0;
+            padding: 0;
+        }
+        .header {
+            background-color: #333;
+            color: #fff;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .container {
+            padding: 20px;
+        }
+        .stb-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .stb-item {
+            background: #fff;
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .status {
+            display: flex;
+            align-items: center;
+        }
+        .status-circle {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .status.connected {
+            background-color: green;
+        }
+        .status.disconnected {
+            background-color: red;
+        }
+        .actions button {
+            padding: 10px 15px;
+            background: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .actions button:hover {
+            background: #0056b3;
+        }
+        .logout-btn {
+            background: #dc3545;
+        }
+        .logout-btn:hover {
+            background: #c82333;
+        }
+    </style>
 </head>
 <body>
-    <h1>Connected Devices</h1>
-    <ul>
-        {% for device in devices %}
-            <li>
-                <a href="{% url 'connect_device' device.ip %}">{{ device.name }} ({{ device.ip }})</a>
+    <div class="header">
+        <h1>Panel de STBs</h1>
+        <form method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit" class="logout-btn">Cerrar sesión</button>
+        </form>
+    </div>
+    <div class="container">
+        <h2>STBs Conectados</h2>
+        <ul class="stb-list">
+            {% for stb in stbs %}
+            <li class="stb-item">
+                <div>
+                    <p><strong>{{ stb.name }}</strong> (IP: {{ stb.ip }})</p>
+                    <div class="status">
+                        <div class="status-circle {{ stb.status }}"></div>
+                        <span>{{ stb.status }}</span>
+                    </div>
+                </div>
+                <div class="actions">
+                    {% if stb.status == "connected" %}
+                    <a href="http://localhost:8000/#!action=stream&udid={{ stb.ip }}%3A5555&player=mse&ws=ws%3A%2F%2Flocalhost%3A8000%2F%3Faction%3Dproxy-adb%26remote%3Dtcp%253A8886%26udid%3D{{ stb.ip }}%253A5555" target="_blank">
+                        <button>Ver Stream</button>
+                    </a>
+                    {% else %}
+                    <button disabled>Desconectado</button>
+                    {% endif %}
+                </div>
             </li>
-        {% endfor %}
-    </ul>
+            {% endfor %}
+        </ul>
+    </div>
 </body>
 </html>
