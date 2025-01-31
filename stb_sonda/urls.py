@@ -25,8 +25,11 @@ urlpatterns = [
     # Nueva vista Home
     path('home/', views.home, name='home'),
     # Vista para Logout
-    
+    path('get-logs/<str:ip>/', views.get_logs, name='get_logs'),
+    path('get-logs_1h/<str:ip>/', views.get_logs_1h, name='get_logs_1h'),
     path('accounts/', include('accounts.urls')),
     # Ruta por defecto
     path('', views.home, name='home'),
+    path('list-apks/<str:ip>/', views.list_apks, name='list_apks'),
+    path('install-apk/<str:ip>/', views.install_selected_apk, name='install_selected_apk'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
