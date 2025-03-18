@@ -11,8 +11,8 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 import os
 from pathlib import Path
+ 
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 LOGIN_REDIRECT_URL = '/'  # Redirige a la página principal después del login
@@ -28,9 +28,7 @@ SECRET_KEY = 'django-insecure-aaxh@1amgd9@ps*wg=ex$sjpw7qclcpyga37e6z_^d1olj!y2v
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    '127.0.0.1',
-    'localhost',
-    '10.42.0.50',
+    '*',
 ]
 
 
@@ -62,7 +60,7 @@ ROOT_URLCONF = 'stb_sonda.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],  # Añade esta línea
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],  # Añade esta línea
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -142,5 +140,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # O, si deseas apuntar directamente a /tmp:
 MEDIA_ROOT = '/tmp'
 
-STATIC_URL = '/static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+
+STATIC_URL = 'static/'  # Esto ya debería estar en tu settings.py
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+
