@@ -1,7 +1,22 @@
-1- necesario migrar BBDD 
+git clone <URL_del_repositorio>
+
+
+CORRER EN AMBIENTE VIRTUAL SOLAMENTE(llamarlo venv, por convención del proyecto)
+dentro del ambiente virtual instalar librerias pip
+pip install -r requirements.txt
+
+** necesario migrar BBDD 
+
+python manage.py migrate
+python manage.py loaddata datos.json
+python manage.py runserver 8080 (o puede ser en 8081)
+
 
 2- ws-scrcpy  ejecutar servidor con npm start (npm install -g ws-scrcpy, para instalar)
+** antes de iniciar la apk web de Django para poder ver los streams de los dispos es necesarioejecutar ws-scrcpy
 
+
+****************
 
 pendientes
 1- refactorizar el codigo
