@@ -6,23 +6,38 @@ import subprocess
 from django.contrib.auth.views import LoginView, LogoutView
 from django.http import HttpResponse,StreamingHttpResponse
 import os, time,datetime
+from django.views.decorators.csrf import csrf_exempt
 
 # Datos de STBs (hardcodeados por ahora)
 stbs = [
-    {"name": "ZTE B866V2", "ip": "192.168.0.100", "status": "connected"},
-    {"name": "ZTE B866V2", "ip": "localhost", "status": "1"},
-    # Agrega más STBs según sea necesario
+    {"name": "ZTE B866V2", "ip": "192.168.0.100"},
+    {"name": "ZTE B866V2", "ip": "localhost"},
+    {"name": "STB 1", "ip": "172.16.205.62"},
+    {"name": "STB 2", "ip": "172.16.216.5"},
+    {"name": "STB 3", "ip": "172.16.208.1"},
+    {"name": "STB 4", "ip": "172.16.220.3"},
+    {"name": "STB 5", "ip": "172.16.201.3"},
+    {"name": "STB 6", "ip": "172.16.215.14"},
+    {"name": "STB 7", "ip": "172.16.200.14"},
 ]
 
-def check_adb_connection(ip):
+
+def check_adb_connection(ip, timeout=1):
+    # Primero, verifica si el dispositivo ya está conectado
+    result = subprocess.run(["adb", "devices"], stdout=subprocess.PIPE, text=True)
+    if ip in result.stdout:
+        return "connected"
+    
+    # Si no está conectado, intenta conectarlo con un timeout
     try:
         result = subprocess.run(
-            ["adb", "connect", ip],
+            ["timeout", str(timeout), "adb", "connect", ip],
             stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE
+            stderr=subprocess.PIPE,
+            text=True
         )
-        return "connected" if "connected to" in result.stdout.decode() else "disconnected"
-    except Exception as e:
+        return "connected" if "connected to" in result.stdout else "disconnected"
+    except subprocess.TimeoutExpired:
         return "disconnected"
 
 @login_required
