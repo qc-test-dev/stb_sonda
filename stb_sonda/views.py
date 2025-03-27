@@ -18,12 +18,14 @@ stbs = [
     {"name": "STB 4", "ip": "172.16.220.3"},
     {"name": "STB 5", "ip": "172.16.201.3"},
     {"name": "STB 6", "ip": "172.16.215.14"},
+    {"name": "STB 7", "ip": "172.16.200.5"},
     {"name": "STB 7", "ip": "172.16.200.14"},
 ]
 
 
-def check_adb_connection(ip, timeout=1):
+def check_adb_connection(ip, timeout=2):
     # Primero, verifica si el dispositivo ya está conectado
+    adb_port_tcpip = '5555'
     result = subprocess.run(["adb", "devices"], stdout=subprocess.PIPE, text=True)
     if ip in result.stdout:
         return "connected"
@@ -31,7 +33,7 @@ def check_adb_connection(ip, timeout=1):
     # Si no está conectado, intenta conectarlo con un timeout
     try:
         result = subprocess.run(
-            ["timeout", str(timeout), "adb", "connect", ip],
+            ["timeout", str(timeout), "adb", "connect", ip, adb_port_tcpip],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             text=True
@@ -44,7 +46,7 @@ def check_adb_connection(ip, timeout=1):
 def home(request):
     for stb in stbs:
         stb["status"] = check_adb_connection(stb["ip"])
-    return render(request, "home.html", {"stbs": stbs})
+    return render(request, "home.html", {"stbs": stbs, "localhost": "10.7.1.201"})
 
 
 def login_redirect(request):

@@ -96,7 +96,8 @@
                    
 
                     {% if stb.status == "connected" %}
-                    <a href="http://localhost:8000/#!action=stream&udid={{ stb.ip }}%3A5555&player=mse&ws=ws%3A%2F%2Flocalhost%3A8000%2F%3Faction%3Dproxy-adb%26remote%3Dtcp%253A8886%26udid%3D{{ stb.ip }}%253A5555" target="_blank">
+                    
+                    <a href="http://{{localhost}}:8000/#!action=stream&udid={{ stb.ip }}%3A5555&player=mse&ws=ws%3A%2F%2F{{localhost}}%3A8000%2F%3Faction%3Dproxy-adb%26remote%3Dtcp%253A8886%26udid%3D{{ stb.ip }}%253A5555" target="_blank">
                         <button>Ver Stream</button>
                     </a>
 

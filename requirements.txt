@@ -2,8 +2,8 @@ requests
 django
 django-cors-headers
 django-filter
-django-rest-swagger
-django-rest-swagger-2
+#django-rest-swagger
+#django-rest-swagger-2
 django-rest-auth
 urllib3
 django-extensions
