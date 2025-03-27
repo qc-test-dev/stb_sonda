@@ -23,9 +23,10 @@ stbs = [
 ]
 
 
-def check_adb_connection(ip, timeout=2):
+def check_adb_connection(ip, timeout=1):
     # Primero, verifica si el dispositivo ya está conectado
     adb_port_tcpip = '5555'
+    ip_port = f"{ip}:{adb_port_tcpip}" 
     result = subprocess.run(["adb", "devices"], stdout=subprocess.PIPE, text=True)
     if ip in result.stdout:
         return "connected"
@@ -33,11 +34,12 @@ def check_adb_connection(ip, timeout=2):
     # Si no está conectado, intenta conectarlo con un timeout
     try:
         result = subprocess.run(
-            ["timeout", str(timeout), "adb", "connect", ip, adb_port_tcpip],
+            ["timeout", str(timeout), "adb", "connect", ip_port],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             text=True
         )
+        print(result)
         return "connected" if "connected to" in result.stdout else "disconnected"
     except subprocess.TimeoutExpired:
         return "disconnected"
