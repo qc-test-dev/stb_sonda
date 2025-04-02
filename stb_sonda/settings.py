@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'accounts',
     'stb_manager',
+    "documents",
 ]
 
 MIDDLEWARE = [
@@ -134,14 +135,18 @@ AUTH_USER_MODEL = 'accounts.CustomUser'
 
 
 
+
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media') 
 # O, si deseas apuntar directamente a /tmp:
-MEDIA_ROOT = '/tmp'
+#MEDIA_ROOT = '/tmp'
 
 
-STATIC_URL = 'static/'  # Esto ya debería estar en tu settings.py
+
+STATIC_URL = '/static/'  # Esto ya debería estar en tu settings.py
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+
 
 

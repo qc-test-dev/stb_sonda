@@ -1,0 +1,31 @@
+{% extends 'documents/base.html' %}
+{% load static %}
+
+{% block title %}
+    Subir Documento
+{% endblock title %}
+
+{% block content %}
+<div class="header">
+    <h1>Subir Documento</h1>
+    <a href="{% url 'doc_app:allDoc' %}" class="back-btn">Volver a documento</a>
+</div>
+
+<div class="container">
+    <form method="post" enctype="multipart/form-data" class="upload-form">
+        {% csrf_token %}
+        <label for="id_title">Título:</label>
+        {{ form.title }}
+    
+        <label for="id_description">Descripción:</label>
+        {{ form.description }}
+    
+       {{form.document}}
+        
+    
+        <button type="submit" class="upload-btn">Subir</button>
+    </form>
+</div>
+
+
+{% endblock content %}
