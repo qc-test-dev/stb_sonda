@@ -228,3 +228,42 @@ body {
         max-width: 100%;
     }
 }
+.pagination {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(250, 250, 250, 0.95);
+    padding: 10px 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    gap: 8px;
+}
+
+.page-btn {
+    padding: 8px 16px;
+    background: #4CAF50; /* Verde elegante */
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 500;
+    border: none;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.page-btn:hover {
+    background: #388E3C; /* Verde más oscuro al pasar el mouse */
+    transform: scale(1.05);
+}
+
+.current {
+    font-size: 14px;
+    font-weight: bold;
+    color: #fff;
+    background: #6C757D; /* Gris moderno */
+    padding: 8px 14px;
+    border-radius: 8px;
+}
