@@ -25,8 +25,19 @@ class DocumentCreateView(LoginRequiredMixin,CreateView):
     def form_valid(self, form):
         document = form.save(commit=False)
         document.save()
-        return super().form_valid(form)
+        return super(DocumentCreateView,self).form_valid(form)
 
     success_url = reverse_lazy('doc_app:allDoc')  # Redirección después de crear
     login_url = '/accounts/login/'
+class ListBySearchDocumentsListView(ListView):
+    model = Document
+    template_name = "documents/search.html"
+    context_object_name='docs'
+    def get_queryset(self):
+        print('++++++++++++++++++++++++++++')
+        search = self.request.GET.get('search','')
+        print(f'{search}')
+        list= Document.objects.filter(title__contains=search)
+        print(list)
+        return list
 

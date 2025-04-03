@@ -17,10 +17,11 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from .views import listAllDocumentListView,DocumentCreateView,successView
+from .views import listAllDocumentListView,DocumentCreateView,successView,ListBySearchDocumentsListView
 app_name='doc_app'
 urlpatterns = [
     path('documentos/', listAllDocumentListView.as_view(), name='allDoc'),
     path("subir_doc/",DocumentCreateView.as_view(),name="createDoc"),
-    path("success/", successView.as_view(), name="success")
+    path("success/", successView.as_view(), name="success"),
+    path("buscar/", ListBySearchDocumentsListView.as_view(), name="search")
 ] 

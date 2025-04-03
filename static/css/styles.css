@@ -11,7 +11,7 @@ body {
     color: #fff;
     padding: 10px 20px;
     display: flex;
-    justify-content: space-evenly;
+    justify-content: space-between;
     align-items: center;
 }
 
@@ -19,13 +19,16 @@ body {
     padding: 20px;
 }
 .container-btn{
+    width: 35em;
     display: flex;
-    gap: 5rem;
+    gap: 1em;   
 }
 
 /* Botón de regreso y de crear*/
 .back-btn,.create-btn{
-    padding: 12px 24px;
+    min-width: 36%;
+    max-width: 37%;
+    padding: 0.8em 1em;
     font-size: 16px;
     font-weight: bold;
     text-decoration: none;
@@ -34,6 +37,7 @@ body {
     border-radius: 8px;
     transition: all 0.3s ease-in-out;
     box-shadow: 0 4px 6px rgba(0, 123, 255, 0.3);
+    text-align: center;
 }
 
 .back-btn:hover,.create-btn:hover{
