@@ -124,10 +124,10 @@
         <h1>Panel de STBs</h1>
         <div class="form-doc">
             <a href="{% url 'doc_app:allDoc' %}" class="doc-btn">Documentos</a>
-            <a href="#" class="apk-btn">APKs</a>
+            <a href="{% url 'apk_app:allApks' %}" class="apk-btn">APKs</a>
         </div>
 
-        <form method="post" action="{% url 'doc_app:createDoc' %}">
+        <form method="post" action="{% url 'logout' %}">
             {% csrf_token %}
             <button type="submit" class="logout-btn">Cerrar sesión</button>
         </form>

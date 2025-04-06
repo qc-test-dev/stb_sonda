@@ -34,10 +34,7 @@ class ListBySearchDocumentsListView(ListView):
     template_name = "documents/search.html"
     context_object_name='docs'
     def get_queryset(self):
-        print('++++++++++++++++++++++++++++')
         search = self.request.GET.get('search','')
-        print(f'{search}')
         list= Document.objects.filter(title__contains=search)
-        print(list)
         return list
 

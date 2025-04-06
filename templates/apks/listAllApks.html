@@ -7,31 +7,29 @@
 
 {% block content %}
 <div class="header">
-    <h1>Lista de Documentos</h1>
-    <form method="get" class="search-form">
+    <h1> Apks Claro Video</h1>  
+    <form method="get" class="search-form" action="{% url 'apk_app:search' %}">
         {% csrf_token %}
         <input type="text" id="search" name="search" class="search" placeholder="Buscar...">
         <input type="submit" value="🔍" class="search-btn">
-    </form>
-       
+    </form>    
     <div class="container-btn">
-        <a href="{% url 'doc_app:allDoc'%}" class="back-btn">Ver todos los documentos</a>
-        <a href="{% url 'doc_app:createDoc'%}" class="create-btn">Subir un documento</a>
+        <a href="{% url 'home'%}" class="back-btn">Volver al Panel</a>
+        <a href="{% url 'apk_app:createApk'%}" class="create-btn">Subir Apk</a>
     </div>
 </div>
 <div class="container">
-    <h2>Documentos Disponibles</h2>
+    <h2>Apk Disponibles</h2>
 
-    <ul class="doc-list">
-        {% for doc in docs %}
-        <li class="doc-item">
+    <ul class="apk-list">
+        {% for apk in apks %}
+        <li class="apk-item">
             <div class="text">
-                <h4>{{ doc.title }}</h4>
-                <p>{{ doc.description }}</p>
+                <h4>{{ apk.title }}</h4>
+                <p>{{ apk.description }}</p>
             </div>  
             <div class="btn">
-                <a href="{{ doc.document.url }}" target="_blank" class="view-btn">Ver</a>
-                <a href="{{ doc.document.url }}" class="download-btn" download>Descargar</a>
+                <a href="{{ apk.document.url }}" class="download-btn" download>Descargar</a>
             </div>
         </li>
         {% endfor %}

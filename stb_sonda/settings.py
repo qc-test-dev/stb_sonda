@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'accounts',
     'stb_manager',
-    "documents",
+    'documents',
+    'apks',
 ]
 
 MIDDLEWARE = [

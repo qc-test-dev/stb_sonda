@@ -213,7 +213,36 @@ body {
     background: #d4edda;
     color: #155724;
 }
-
+.apk-list{
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-auto-rows: 10rem;
+    background: #fff;
+    padding: 1em;
+    border-radius: 0.5em;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin: 1em 1.5em;
+}
+.apk-item{
+    background: #505050;
+    color: #fff;
+    border-radius: 8px;
+    margin: 0.5em 1em;
+    padding: 1.5em 1em;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: center ;
+    align-items: center;
+    max-width: 10em;
+    min-width: 10em;
+    word-wrap: break-word;  /* Para navegadores antiguos */
+    overflow-wrap: break-word; /* Para navegadores modernos */
+}
+h4{
+    padding:  0.5em 0;
+    margin: 0;
+}
 
 
 

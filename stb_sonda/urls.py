@@ -33,4 +33,5 @@ urlpatterns = [
     path('install-apk/<str:ip>/', views.install_selected_apk, name='install_selected_apk'),
     
     path('doc/', include('documents.urls')),
+    path('apk/', include('apks.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
