@@ -1,0 +1,302 @@
+/* Estilos generales */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f7;
+    margin: 0;
+    padding: 0;
+}
+
+.header {
+    background-color: #333;
+    color: #fff;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.container {
+    padding: 20px;
+}
+.container-btn{
+    width: 35em;
+    display: flex;
+    gap: 1em;   
+}
+
+/* Botón de regreso y de crear*/
+.back-btn,.create-btn{
+    min-width: 36%;
+    max-width: 37%;
+    padding: 0.8em 1em;
+    font-size: 16px;
+    font-weight: bold;
+    text-decoration: none;
+    background: #007bff;
+    color: white;
+    border-radius: 8px;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 4px 6px rgba(0, 123, 255, 0.3);
+    text-align: center;
+}
+
+.back-btn:hover,.create-btn:hover{
+    background: #0056b3;
+    box-shadow: 0 6px 10px rgba(0, 123, 255, 0.5);
+}
+
+/* Sección de subida de archivos */
+.upload-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    padding: 20px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+/* Caja para arrastrar y soltar archivos */
+.upload-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 400px;
+    padding: 20px;
+    border: 2px dashed #007bff;
+    border-radius: 8px;
+    background: #f8f9fa;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+.upload-label:hover {
+    background: #e9ecef;
+    border-color: #0056b3;
+}
+
+.upload-label i {
+    font-size: 40px;
+    color: #007bff;
+    margin-bottom: 10px;
+}
+
+.upload-label span {
+    font-size: 16px;
+    color: #333;
+}
+
+/* Ocultar input de archivo */
+.upload-input {
+    display: none;
+}
+
+/* Botón de carga */
+.upload-btn {
+    padding: 12px 24px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: all 0.3s ease-in-out;
+}
+
+.upload-btn:hover {
+    background: #0056b3;
+    box-shadow: 0 4px 6px rgba(0, 123, 255, 0.3);
+}
+
+/* Lista de documentos */
+.doc-list {
+    list-style: none;
+    padding: 0;
+}
+
+.doc-item {
+    background: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.container-item{
+    width: 100%;
+    display: flex;
+}
+
+/* Botón de descarga */
+.download-btn,.view-btn {
+    padding: 10px 15px;
+    background: #28a745;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: all 0.3s ease-in-out;
+}
+.text{
+    max-width: 70%;
+    justify-content: center;
+    align-items: center;
+    word-wrap: break-word;  /* Para navegadores antiguos */
+    overflow-wrap: break-word; /* Para navegadores modernos */
+}
+
+.download-btn:hover,.view-btn:hover {
+    background: #1e7e34;
+    box-shadow: 0 4px 6px rgba(40, 167, 69, 0.3);
+}
+.form-input, .form-textarea, .form-file {
+    width: 100%;
+    max-width: 400px;
+    padding: 10px;
+    margin: 5px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.form-textarea {
+    resize: none;
+    height: 100px;
+
+}
+
+.form-file {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 400px;
+    padding: 15px;
+    font-size: 16px;
+    font-weight: bold;
+    border: 2px dashed #007bff;
+    border-radius: 8px;
+    background: #f8f9fa;
+    color: #007bff;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Cambia de color al pasar el mouse */
+.form-file:hover {
+    background: #e9ecef;
+    border-color: #0056b3;
+}
+
+/* Icono de carga */
+.form-file i {
+    font-size: 24px;
+    margin-bottom: 5px;
+}
+
+/* Ocultar el input real */
+
+
+/* Cuando se selecciona un archivo */
+.form-file-selected {
+    border-color: #28a745;
+    background: #d4edda;
+    color: #155724;
+}
+.apk-list{
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-auto-rows: 10rem;
+    background: #fff;
+    padding: 1em;
+    border-radius: 0.5em;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin: 1em 1.5em;
+}
+.apk-item{
+    background: #505050;
+    color: #fff;
+    border-radius: 8px;
+    margin: 0.5em 1em;
+    padding: 1.5em 1em;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: center ;
+    align-items: center;
+    max-width: 10em;
+    min-width: 10em;
+    word-wrap: break-word;  /* Para navegadores antiguos */
+    overflow-wrap: break-word; /* Para navegadores modernos */
+}
+h4{
+    padding:  0.5em 0;
+    margin: 0;
+}
+
+
+
+/* Responsive */
+@media (max-width: 768px) {
+    .header {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .container {
+        padding: 10px;
+    }
+
+    .upload-label {
+        max-width: 100%;
+    }
+}
+.pagination {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(250, 250, 250, 0.95);
+    padding: 10px 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    gap: 8px;
+}
+
+.page-btn {
+    padding: 8px 16px;
+    background: #4CAF50; /* Verde elegante */
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 500;
+    border: none;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.page-btn:hover {
+    background: #388E3C; /* Verde más oscuro al pasar el mouse */
+    transform: scale(1.05);
+}
+
+.current {
+    font-size: 14px;
+    font-weight: bold;
+    color: #fff;
+    background: #6C757D; /* Gris moderno */
+    padding: 8px 14px;
+    border-radius: 8px;
+}

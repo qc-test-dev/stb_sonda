@@ -17,21 +17,11 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from . import views
+from .views import listAllDocumentListView,DocumentCreateView,successView,ListBySearchDocumentsListView
+app_name='doc_app'
 urlpatterns = [
-
-    path('admin/', admin.site.urls),
-    # Nueva vista Home
-    path('home/', views.home, name='home'),
-    # Vista para Logout
-    path('get-logs/<str:ip>/', views.get_logs, name='get_logs'),
-    path('get-logs_1h/<str:ip>/', views.get_logs_1h, name='get_logs_1h'),
-    path('accounts/', include('accounts.urls')),
-    # Ruta por defecto
-    path('', views.home, name='home'),
-    path('list-apks/<str:ip>/', views.list_apks, name='list_apks'),
-    path('install-apk/<str:ip>/', views.install_selected_apk, name='install_selected_apk'),
-    
-    path('doc/', include('documents.urls')),
-    path('apk/', include('apks.urls')),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    path('documentos/', listAllDocumentListView.as_view(), name='allDoc'),
+    path("subir_doc/",DocumentCreateView.as_view(),name="createDoc"),
+    #path("success/", successView.as_view(), name="success"),
+    path("buscar/", ListBySearchDocumentsListView.as_view(), name="search")
+] 

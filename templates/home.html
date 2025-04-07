@@ -66,15 +66,67 @@
         }
         .logout-btn {
             background: #dc3545;
+            color: #ffffff;
+            padding: 12px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+            box-shadow: 0 4px 6px rgba(220, 53, 69, 0.3);
         }
+        
         .logout-btn:hover {
             background: #c82333;
         }
+        .form-doc {
+            display: flex;
+            gap: 1em;
+        }
+        .doc-btn, .apk-btn {
+            display: inline-block;
+            text-decoration: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+        }
+        
+        .doc-btn {
+            background-color: #007bff;
+            color: white;
+            box-shadow: 0 4px 6px rgba(0, 123, 255, 0.3);
+        }
+        
+        .doc-btn:hover {
+            background-color: #0056b3;
+            box-shadow: 0 6px 10px rgba(0, 123, 255, 0.5);
+        }
+        
+        .apk-btn {
+            background-color: #28a745;
+            color: white;
+            box-shadow: 0 4px 6px rgba(40, 167, 69, 0.3);
+        }
+        
+        .apk-btn:hover {
+            background-color: #1e7e34;
+            box-shadow: 0 6px 10px rgba(40, 167, 69, 0.5);
+        }
+        
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>Panel de Dispositivos</h1>
+        <h1>Panel de STBs</h1>
+        <div class="form-doc">
+            <a href="{% url 'doc_app:allDoc' %}" class="doc-btn">Documentos</a>
+            <a href="{% url 'apk_app:allApks' %}" class="apk-btn">APKs</a>
+        </div>
+
         <form method="post" action="{% url 'logout' %}">
             {% csrf_token %}
             <button type="submit" class="logout-btn">Cerrar sesión</button>

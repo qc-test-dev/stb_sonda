@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    Documentos
+{% endblock title %}
+
+{% block content %}
+<div class="header">
+    <h1>Lista de Documentos</h1>
+    <form method="get" class="search-form" action="{% url 'doc_app:search' %}">
+        {% csrf_token %}
+        <input type="text" id="search" name="search" class="search" placeholder="Buscar...">
+        <input type="submit" value="🔍" class="search-btn">
+    </form>    
+    <div class="container-btn">
+        <a href="{% url 'home'%}" class="back-btn">Volver al Panel</a>
+        <a href="{% url 'doc_app:createDoc'%}" class="create-btn">Subir un documento</a>
+    </div>
+</div>
+<div class="container">
+    <h2>Documentos Disponibles</h2>
+
+    <ul class="doc-list">
+        {% for doc in docs %}
+        <li class="doc-item">
+            <div class="text">
+                <h4>{{ doc.title }}</h4>
+                <p>{{ doc.description }}</p>
+            </div>  
+            <div class="btn">
+                <a href="{{ doc.document.url }}" target="_blank" class="view-btn">Ver</a>
+                <a href="{{ doc.document.url }}" class="download-btn" download>Descargar</a>
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% if is_paginated %}
+<div class="pagination">
+    {% if page_obj.has_previous %}
+        <a href="?page=1" class="page-btn">Primera</a>
+        <a href="?page={{ page_obj.previous_page_number }}" class="page-btn">Anterior</a>
+    {% endif %}
+
+    <span class="current">
+        Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}.
+    </span>
+
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}" class="page-btn">Siguiente</a>
+        <a href="?page={{ page_obj.paginator.num_pages }}" class="page-btn">Última</a>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock content %}

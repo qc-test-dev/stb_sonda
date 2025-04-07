@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    Apks
+{% endblock title %}
+
+{% block content %}
+<div class="header">
+    <h1>Apks Claro Video</h1>
+    <form method="get" class="search-form">
+        {% csrf_token %}
+        <input type="text" id="search" name="search" class="search" placeholder="Buscar...">
+        <input type="submit" value="🔍" class="search-btn">
+    </form>
+       
+    <div class="container-btn">
+        <a href="{% url 'apk_app:allApks'%}" class="back-btn">Ver todos las apks</a>
+        <a href="{% url 'apk_app:createApk'%}" class="create-btn">Subir un apk</a>
+    </div>
+</div>
+<div class="container">
+    <h2>Apk Disponibles</h2>
+
+    <ul class="apk-list">
+        {% for apk in apks %}
+        <li class="apk-item">
+            <div class="text">
+                <h4>{{ apk.title }}</h4>
+                <p>{{ apk.description }}</p>
+            </div>  
+            <div class="btn">
+                <a href="{{ apk.document.url }}" class="download-btn" download>Descargar</a>
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% if is_paginated %}
+<div class="pagination">
+    {% if page_obj.has_previous %}
+        <a href="?page=1" class="page-btn">Primera</a>
+        <a href="?page={{ page_obj.previous_page_number }}" class="page-btn">Anterior</a>
+    {% endif %}
+
+    <span class="current">
+        Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}.
+    </span>
+
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}" class="page-btn">Siguiente</a>
+        <a href="?page={{ page_obj.paginator.num_pages }}" class="page-btn">Última</a>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock content %}
