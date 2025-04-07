@@ -5,3 +5,4 @@ __pycache__/
 shared/
 static/videos/
 static/*.apk
+media/apk/*.apk
