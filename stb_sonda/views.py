@@ -48,7 +48,7 @@ def check_adb_connection(ip, timeout=1):
 def home(request):
     for stb in stbs:
         stb["status"] = check_adb_connection(stb["ip"])
-    return render(request, "home.html", {"stbs": stbs, "localhost": "10.7.1.201"})
+    return render(request, "home.html", {"stbs": stbs, "localhost": "localhost"})
 
 
 def login_redirect(request):

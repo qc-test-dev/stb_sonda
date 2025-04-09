@@ -218,7 +218,7 @@ body {
     grid-template-columns: repeat(5, 1fr);
     grid-auto-rows: 10rem;
     background: #fff;
-    padding: 1em;
+    margin: 1em;
     border-radius: 0.5em;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     margin: 1em 1.5em;
