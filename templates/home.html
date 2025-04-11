@@ -1,6 +1,7 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,6 +13,7 @@
             margin: 0;
             padding: 0;
         }
+
         .header {
             background-color: #333;
             color: #fff;
@@ -20,13 +22,16 @@
             justify-content: space-between;
             align-items: center;
         }
+
         .container {
             padding: 20px;
         }
+
         .stb-list {
             list-style-type: none;
             padding: 0;
         }
+
         .stb-item {
             background: #fff;
             margin: 10px 0;
@@ -37,22 +42,27 @@
             justify-content: space-between;
             align-items: center;
         }
+
         .status {
             display: flex;
             align-items: center;
         }
+
         .status-circle {
             width: 10px;
             height: 10px;
             border-radius: 50%;
             margin-right: 8px;
         }
+
         .status.connected {
             background-color: green;
         }
+
         .status.disconnected {
             background-color: red;
         }
+
         .actions button {
             padding: 10px 15px;
             background: #007bff;
@@ -61,9 +71,11 @@
             border-radius: 4px;
             cursor: pointer;
         }
+
         .actions button:hover {
             background: #0056b3;
         }
+
         .logout-btn {
             background: #dc3545;
             color: #ffffff;
@@ -76,15 +88,18 @@
             transition: all 0.3s ease-in-out;
             box-shadow: 0 4px 6px rgba(220, 53, 69, 0.3);
         }
-        
+
         .logout-btn:hover {
             background: #c82333;
         }
+
         .form-doc {
             display: flex;
             gap: 1em;
         }
-        .doc-btn, .apk-btn {
+
+        .doc-btn,
+        .apk-btn {
             display: inline-block;
             text-decoration: none;
             padding: 12px 24px;
@@ -94,31 +109,31 @@
             cursor: pointer;
             transition: all 0.3s ease-in-out;
         }
-        
+
         .doc-btn {
             background-color: #007bff;
             color: white;
             box-shadow: 0 4px 6px rgba(0, 123, 255, 0.3);
         }
-        
+
         .doc-btn:hover {
             background-color: #0056b3;
             box-shadow: 0 6px 10px rgba(0, 123, 255, 0.5);
         }
-        
+
         .apk-btn {
             background-color: #28a745;
             color: white;
             box-shadow: 0 4px 6px rgba(40, 167, 69, 0.3);
         }
-        
+
         .apk-btn:hover {
             background-color: #1e7e34;
             box-shadow: 0 6px 10px rgba(40, 167, 69, 0.5);
         }
-        
     </style>
 </head>
+
 <body>
     <div class="header">
         <h1>Panel de STBs</h1>
@@ -145,13 +160,17 @@
                     </div>
                 </div>
                 <div class="actions">
-                   
+
 
                     {% if stb.status == "connected" %}
-                    
-                    <a href="http://{{localhost}}:8000/#!action=stream&udid={{ stb.ip }}%3A5555&player=mse&ws=ws%3A%2F%2F{{localhost}}%3A8000%2F%3Faction%3Dproxy-adb%26remote%3Dtcp%253A8886%26udid%3D{{ stb.ip }}%253A5555" target="_blank">
+
+                    <!-- <a href="http://{{localhost}}:8000/#!action=stream&udid={{ stb.ip }}%3A5555&player=mse&ws=ws%3A%2F%2F{{localhost}}%3A8000%2F%3Faction%3Dproxy-adb%26remote%3Dtcp%253A8886%26udid%3D{{ stb.ip }}%253A5555" target="_blank">
+                        <button>Ver Stream</button>
+                    </a> -->
+                    <a href="{% url 'stream_view' stb.ip %}" target="_blank">
                         <button>Ver Stream</button>
                     </a>
+
 
                     <a href="{% url 'get_logs' stb.ip %}">
                         <button>Obtener Logs 24 h</button>
@@ -164,15 +183,16 @@
                     <a href="{% url 'list_apks' stb.ip %}">
                         <button>Instalar APK</button>
                     </a>
-                    
+
                     {% else %}
                     <button disabled>Desconectado</button>
                     {% endif %}
                 </div>
-                
+
             </li>
             {% endfor %}
         </ul>
     </div>
 </body>
+
 </html>

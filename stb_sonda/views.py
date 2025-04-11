@@ -1,4 +1,6 @@
 # Django views.py
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
@@ -7,6 +9,8 @@ from django.contrib.auth.views import LoginView, LogoutView
 from django.http import HttpResponse,StreamingHttpResponse
 import os, time,datetime
 from django.views.decorators.csrf import csrf_exempt
+import json
+import os
 
 # Datos de STBs (hardcodeados por ahora)
 stbs = [
@@ -172,3 +176,27 @@ def install_selected_apk(request, ip):
             return HttpResponse(f"Error: {str(e)}", status=500)
     else:
         return HttpResponse("Método no permitido", status=405)
+from django.shortcuts import render
+
+def stream_view(request, stb_ip):
+    stb = {
+        'ip': stb_ip,
+        'name': f'STB {stb_ip}'
+    }
+    context = {
+        'stb': stb,
+        'host': 'localhost',  # O dinámicamente: request.get_host().split(':')[0]
+    }
+    return render(request, 'live-tv/stream_view.html', context)
+@csrf_exempt
+def send_adb_command(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        command = data.get("command")
+        ip = data.get("ip")
+        if command and ip:
+            full_cmd = f'adb -s {ip}:5555 shell {command}'
+            os.system(full_cmd)
+            return JsonResponse({"message": f"Comando enviado: {command}"})
+        return JsonResponse({"message": "Faltan datos"}, status=400)
+    return JsonResponse({"message": "Método no permitido"}, status=405)

@@ -34,4 +34,6 @@ urlpatterns = [
     
     path('doc/', include('documents.urls')),
     path('apk/', include('apks.urls')),
+    path('stream_view/<str:stb_ip>/', views.stream_view, name='stream_view'),
+    path('send-adb/', views.send_adb_command, name='send_adb_command'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
