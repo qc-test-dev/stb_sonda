@@ -125,9 +125,9 @@ def get_logs_1h(request, ip):
 # Instalar una APK desde la carpeta static
 def install_apk(request, ip):
     try:
-        apk_path = os.path.join("static", "app.apk")  # Ruta de la APK en static
+        apk_path = os.path.join("static/apks", "app.apk")  # Ruta de la APK en static
         if not os.path.exists(apk_path):
-            return HttpResponse("APK no encontrada en la carpeta static", status=404)
+            return HttpResponse("APK no encontrada en la carpeta static/apks", status=404)
         # Comando ADB para instalar la APK
         result = subprocess.run(
             ["adb", "-s", ip, "install", apk_path],
@@ -143,7 +143,7 @@ def install_apk(request, ip):
     
 
 def list_apks(request, ip):
-    apk_folder = os.path.join("static")  # Carpeta donde se almacenan las APKs
+    apk_folder = os.path.join("static/apks")  # Carpeta donde se almacenan las APKs
     try:
         # Lista las APKs disponibles en la carpeta static
         apks = [f for f in os.listdir(apk_folder) if f.endswith(".apk")]
@@ -156,7 +156,7 @@ def list_apks(request, ip):
 def install_selected_apk(request, ip):
     if request.method == "POST":
         apk_name = request.POST.get("apk")
-        apk_path = os.path.join("static", apk_name)
+        apk_path = os.path.join("static/apks", apk_name)
 
         if not os.path.exists(apk_path):
             return HttpResponse(f"APK '{apk_name}' no encontrada en la carpeta static", status=404)
