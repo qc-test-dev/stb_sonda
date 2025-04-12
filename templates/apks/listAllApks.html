@@ -2,39 +2,42 @@
 {% load static %}
 
 {% block title %}
-    Apks
+    Lista de APKs
 {% endblock title %}
 
 {% block content %}
 <div class="header">
-    <h1> Apks Claro Video</h1>  
+    <h1>APKs Disponibles</h1>
     <form method="get" class="search-form" action="{% url 'apk_app:search' %}">
         {% csrf_token %}
-        <input type="text" id="search" name="search" class="search" placeholder="Buscar...">
+        <input type="text" name="search" class="search" placeholder="Buscar APK...">
         <input type="submit" value="🔍" class="search-btn">
-    </form>    
+    </form>
+
     <div class="container-btn">
-        <a href="{% url 'home'%}" class="back-btn">Volver al Panel</a>
-        <a href="{% url 'apk_app:createApk'%}" class="create-btn">Subir Apk</a>
+        <a href="{% url 'home' %}" class="back-btn">Volver al Panel</a>
     </div>
 </div>
-<div class="container">
-    <h2>Apk Disponibles</h2>
 
-    <ul class="apk-list">
-        {% for apk in apks %}
-        <li class="apk-item">
-            <div class="text">
-                <h4>{{ apk.title }}</h4>
-                <p>{{ apk.description }}</p>
-            </div>  
-            <div class="btn">
-                <a href="{{ apk.document.url }}" class="download-btn" download>Descargar</a>
-            </div>
-        </li>
-        {% endfor %}
-    </ul>
+<div class="container">
+    {% if archivos %}
+        <h2>Desde Carpeta Estática</h2>
+        <ul class="doc-list">
+            {% for archivo in archivos %}
+            <li class="doc-item">
+                <div class="text">
+                    <h4>{{ archivo|slice:"5:" }}</h4>
+                </div>
+                <div class="btn">
+                    <a href="{% static archivo %}" target="_blank" class="view-btn">Ver</a>
+                    <a href="{% static archivo %}" download class="download-btn">Descargar</a>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
 </div>
+
 {% if is_paginated %}
 <div class="pagination">
     {% if page_obj.has_previous %}

@@ -6,5 +6,5 @@ shared/
 static/videos/
 static/*.apk
 *.apk
-media/apk/*.apk
-media
+static/apks
+static/docs
