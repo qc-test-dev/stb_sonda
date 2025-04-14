@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ nombre_actual }}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-5">
+    <a href="{% url 'matrix_app:listExcel' %}" class="btn btn-secondary mb-4">← Volver a la lista</a>
+
+    <h3 class="mb-4">Vista del archivo: {{ nombre_actual }}</h3>
+
+    <!-- Formulario para seleccionar hoja -->
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="hoja" class="form-label">Seleccionar Hoja:</label>
+            <select name="hoja_seleccionada" id="hoja" class="form-select">
+                {% for hoja in hojas %}
+                    <option value="{{ hoja }}" {% if hoja == hoja_seleccionada %}selected{% endif %}>
+                        {{ hoja }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Ver Hoja</button>
+    </form>
+
+    <hr>
+
+    {% if tablas %}
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header bg-info text-white fw-bold">
+                Hoja: {{ tablas.0.nombre_hoja }}
+            </div>
+            <div class="card-body table-responsive">
+                {{ tablas.0.tabla_html|safe }}
+            </div>
+        </div>
+    {% endif %}
+</div>
+</body>
+</html>

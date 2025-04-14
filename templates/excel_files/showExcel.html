@@ -6,24 +6,16 @@
 </head>
 <body>
 <div class="container mt-5">
-    <h2>Archivos Excel disponibles</h2>
-    <ul class="list-group">
-        {% for archivo in archivos %}
-            <li class="list-group-item {% if archivo == nombre_actual %}active{% endif %}">
-                <a class="text-decoration-none {% if archivo == nombre_actual %}text-white{% endif %}" href="{% url 'mostrar_excel' archivo %}">
-                    {{ archivo }}
-                </a>
-            </li>
-        {% endfor %}
-    </ul>
+    <h2 class="mb-4">Archivos Excel disponibles</h2>
 
-    {% if tabla_html %}
-        <hr>
-        <h3>Vista del archivo: {{ nombre_actual }}</h3>
-        <div class="table-responsive">
-            {{ tabla_html|safe }}
-        </div>
-    {% endif %}
+    <div class="list-group">
+        {% for archivo in archivos %}
+            <div class="d-flex justify-content-between align-items-center list-group-item">
+                <span>{{ archivo }}</span>
+                <a href="{% url 'matrix_app:showExcel' archivo %}" class="btn btn-primary btn-sm">Ver archivo</a>
+            </div>
+        {% endfor %}
+    </div>
 </div>
 </body>
 </html>

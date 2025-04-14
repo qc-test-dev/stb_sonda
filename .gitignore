@@ -8,3 +8,4 @@ static/*.apk
 *.apk
 static/apks
 static/docs
+static/excel_files
