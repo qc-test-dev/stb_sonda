@@ -1,55 +1,83 @@
+from django.shortcuts import render, redirect, get_object_or_404
+from .forms import SuperMatrizForm, MatrizForm, CasoDePruebaForm
+from .models import SuperMatriz, Matriz, CasoDePrueba
+from .utils import importar_matriz_desde_excel, copiar_casos_de_matriz_base
 import os
-from django.conf import settings
-from django.shortcuts import render
-import pandas as pd
-def lista_archivos_excel(request):
-    carpeta = settings.EXCEL_DIR
-    archivos = [f for f in os.listdir(carpeta) if f.endswith('.xlsx') or f.endswith('.xls')]
-    return render(request, 'excel_files/showExcel.html', {'archivos': archivos})
 
-def mostrar_archivo_excel(request, nombre_archivo):
-    ruta_archivo = os.path.join(settings.EXCEL_DIR, nombre_archivo)
-    xls = pd.ExcelFile(ruta_archivo)
-    hojas = xls.sheet_names
+def super_matriz_dashboard(request):
+    super_matrices = SuperMatriz.objects.all()
 
-    if request.method == "POST":
-        nombre_hoja_seleccionada = request.POST.get('hoja_seleccionada')
-        df = pd.read_excel(xls, sheet_name=nombre_hoja_seleccionada)
-        tabla_html = df.to_html(classes='table table-bordered', index=False, border=0)
-        return render(request, 'excel_files/viewExcel.html', {
-            'tablas': [{'nombre_hoja': nombre_hoja_seleccionada, 'tabla_html': tabla_html}],
-            'nombre_actual': nombre_archivo,
-            'hojas': hojas,
-            'hoja_seleccionada': nombre_hoja_seleccionada
-        })
+    if request.method == 'POST':
+        form = SuperMatrizForm(request.POST)
+        if form.is_valid():
+            # Crear la SuperMatriz
+            super_matriz = form.save()
 
-    return render(request, 'excel_files/viewExcel.html', {
-        'nombre_actual': nombre_archivo,
-        'hojas': hojas
+            # Crear una matriz base asociada a esta super matriz
+            matriz_base = Matriz.objects.create(
+                super_matriz=super_matriz,
+                nombre="Matriz Base"
+            )
+
+            # Cargar casos de prueba en esa matriz base desde Excel
+            ruta_excel = os.path.join('static', 'excel_files', 'matriz_base.xlsx')
+            importar_matriz_desde_excel(matriz_base, ruta_excel)
+
+            return redirect('matrix_app:detalle_super_matriz', super_matriz_id=super_matriz.id)
+    else:
+        form = SuperMatrizForm()
+
+    return render(request, 'excel_files/super_matriz_dashboard.html', {
+        'form': form,
+        'super_matrices': super_matrices
     })
 
-# def mostrar_archivo_excel(request, nombre_archivo):
-#     ruta_archivo = os.path.join(settings.EXCEL_DIR, nombre_archivo)
-#     try:
-#         xls = pd.ExcelFile(ruta_archivo)
-#         hojas = []
+def detalle_super_matriz(request, super_matriz_id):
+    super_matriz = get_object_or_404(SuperMatriz, id=super_matriz_id)
+    matrices = super_matriz.matrices.all()
 
-#         for nombre_hoja in xls.sheet_names:
-#             df = pd.read_excel(xls, sheet_name=nombre_hoja)
-#             tabla_html = df.to_html(classes='table table-bordered', index=False, border=0)
-#             hojas.append({
-#                 'nombre_hoja': nombre_hoja,
-#                 'tabla_html': tabla_html
-#             })
+    if request.method == 'POST':
+        form = MatrizForm(request.POST)
+        if form.is_valid():
+            nueva_matriz = form.save(commit=False)
+            nueva_matriz.super_matriz = super_matriz
+            nueva_matriz.save()
 
-#         return render(request, 'excel_files/showExcel.html', {
-#             'nombre_archivo': nombre_archivo,
-#             'hojas': hojas
-#         })
+            # Usamos la matriz base como fuente para copiar casos
+            matriz_base = super_matriz.matrices.first()
+            if matriz_base:
+                copiar_casos_de_matriz_base(matriz_base, nueva_matriz)
 
-#     except Exception as e:
-#         return render(request, 'excel_files/showExcel.html', {
-#             'nombre_archivo': nombre_archivo,
-#             'error': str(e)
-#         })
+            return redirect('matrix_app:detalle_super_matriz', super_matriz_id=super_matriz.id)
+    else:
+        form = MatrizForm()
 
+    return render(request, 'excel_files/detalle_super_matriz.html', {
+        'super_matriz': super_matriz,
+        'form': form,
+        'matrices': matrices,
+    })
+
+def detalle_matriz(request, matriz_id):
+    matriz = get_object_or_404(Matriz, id=matriz_id)
+    casos_de_prueba = matriz.casos.all()
+    super_matriz_id = matriz.super_matriz.id
+
+    if request.method == 'POST':
+        for caso in casos_de_prueba:
+            form = CasoDePruebaForm(request.POST, instance=caso, prefix=f"caso_{caso.id}")
+            if form.is_valid():
+                form.save()
+
+        return redirect('matrix_app:detalle_matriz', matriz_id=matriz.id)
+
+    formularios_casos_de_prueba = [
+        (caso, CasoDePruebaForm(instance=caso, prefix=f"caso_{caso.id}"))
+        for caso in casos_de_prueba
+    ]
+
+    return render(request, 'excel_files/detalle_matriz.html', {
+        'matriz': matriz,
+        'formularios_casos_de_prueba': formularios_casos_de_prueba,
+        'super_matriz_id': super_matriz_id
+    })

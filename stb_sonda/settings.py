@@ -155,6 +155,7 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 EXCEL_DIR = os.path.join(BASE_DIR, 'static', 'excel_files')
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 5000
 
 
 

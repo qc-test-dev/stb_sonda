@@ -99,7 +99,8 @@
         }
 
         .doc-btn,
-        .apk-btn {
+        .apk-btn,
+        .matrix-btn {
             display: inline-block;
             text-decoration: none;
             padding: 12px 24px;
@@ -131,6 +132,17 @@
             background-color: #1e7e34;
             box-shadow: 0 6px 10px rgba(40, 167, 69, 0.5);
         }
+        .matrix-btn{
+            background-color: #FF6500;
+            color: #fff;
+            box-shadow: 0 4px 6px rgb(11, 25, 44,0.5)
+        }
+
+        .matrix-btn:hover {
+            background-color: #1E3E62;
+            color: #fff;
+            box-shadow: 0 6px 10px rgb(11, 25, 44,0.5);
+        }
     </style>
 </head>
 
@@ -140,6 +152,10 @@
         <div class="form-doc">
             <a href="{% url 'doc_app:allDoc' %}" class="doc-btn">Documentos</a>
             <a href="{% url 'apk_app:allApks' %}" class="apk-btn">APKs</a>
+            <a href="{% url 'matrix_app:dashboard_super_matrices' %}" class="matrix-btn">Matrices</a>
+            
+            
+
         </div>
 
         <form method="post" action="{% url 'logout' %}">
@@ -183,7 +199,6 @@
                     <a href="{% url 'list_apks' stb.ip %}">
                         <button>Instalar APK</button>
                     </a>
-
                     {% else %}
                     <button disabled>Desconectado</button>
                     {% endif %}

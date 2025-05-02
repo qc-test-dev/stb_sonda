@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ matriz.nombre }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .sticky-save-button {
+            position: fixed;
+            bottom: 20px;
+            right: 30px;
+            z-index: 1050;
+        }
+
+        .card-header {
+            background: #0d6efd;
+            color: white;
+            font-weight: 500;
+        }
+
+        textarea.form-control {
+            resize: none;
+        }
+    </style>
+</head>
+<body class="bg-light py-4">
+    <div class="container">
+
+        <!-- Regresar -->
+        <a href="{% url 'matrix_app:detalle_super_matriz' super_matriz_id %}" class="btn btn-outline-secondary mb-4">⬅ Volver</a>
+
+        <!-- Título -->
+        <h1 class="mb-2">{{ matriz.nombre }}</h1>
+        <p class="text-muted">Editar los campos de los casos de prueba</p>
+
+        <!-- Formulario de Casos -->
+        <form method="post">
+            {% csrf_token %}
+            {% for caso, form in formularios_casos_de_prueba %}
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-header">
+                        <strong>{{ caso.fase }}</strong> — {{ caso.caso_de_prueba }}
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label class="form-label">Estado</label>
+                                {{ form.estado }}
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Criticidad</label>
+                                {{ form.criticidad }}
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Nota</label>
+                                {{ form.nota }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+
+            <!-- Botón flotante de guardar -->
+            <button type="submit" class="btn btn-success sticky-save-button shadow">
+                💾 Guardar cambios
+            </button>
+        </form>
+
+    </div>
+</body>
+</html>

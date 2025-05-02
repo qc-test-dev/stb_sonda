@@ -1,0 +1,37 @@
+<!-- templates/detalle_super_matriz.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ super_matriz.nombre }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light py-5">
+    <div class="container">
+        <a href="{% url 'matrix_app:dashboard_super_matrices' %}" class="btn btn-secondary mb-4">⬅ Volver</a>
+        <h1 class="mb-3">{{ super_matriz.nombre }}</h1>
+        <p class="text-muted">{{ super_matriz.descripcion }}</p>
+
+        <h3 class="mt-5">Matrices hijas</h3>
+
+        {% for matriz in matrices %}
+            <div class="card mb-3">
+                <div class="card-header">{{ matriz.nombre }}</div>
+                <div class="card-body">
+                    <a href="{% url 'matrix_app:detalle_matriz' matriz.id %}" class="btn btn-info">Ver Matriz</a>
+                </div>
+            </div>
+        {% empty %}
+            <div class="alert alert-info">No hay matrices aún.</div>
+        {% endfor %}
+
+        <h3 class="mt-5">Agregar nueva matriz</h3>
+        <form method="post" class="card p-3 mt-3">
+            {% csrf_token %}
+            <input type="hidden" name="crear_matriz" value="1">
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary">Agregar Matriz</button>
+        </form>
+    </div>
+</body>
+</html>
