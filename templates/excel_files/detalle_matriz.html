@@ -21,9 +21,55 @@
         textarea.form-control {
             resize: none;
         }
+        .badge {
+            display: inline-block;
+            padding: 0.5em 0.75em;
+            border-radius: 0.5em;
+            font-weight: 600;
+            font-size: large;
+        }
+        .estado-funciona {
+            background-color: #d4edda !important;  /* verde claro */
+            color: #155724 !important;
+        }
+    
+        .estado-falla-nueva {
+            background-color: #c82333 !important;  /* rojo intenso */
+            color: white !important;
+        }
+    
+        .estado-falla-persistente {
+            background-color: #f8d7da !important;  /* rojo claro */
+            color: #721c24 !important;
+        }
+    
+        .estado-na {
+            background-color: #e2e3e5 !important;  /* gris */
+            color: #004085 !important;             /* texto azul */
+        }
+    
+        .estado-pendiente {
+            background-color: #fd7e14 !important;  /* naranja oscuro */
+            color: white !important;
+        }
+    
+        .estado-por-ejecutar {
+            background-color: #ffeeba !important;  /* naranja claro */
+            color: #856404 !important;
+        }
+        .card-matriz-verde {
+            background-color: #d4edda;  /* Verde claro */
+            border-left: 5px solid #28a745;  /* Borde verde */
+            margin: 3em;
+        }
+    
+        .card-matriz-verde .card-header {
+            background-color: #28a745 !important; /* Verde intenso */
+            color: white;
+        }
     </style>
 </head>
-<body class="bg-light py-4">
+<body class="bg-dark text-light py-4">
     <div class="container">
 
         <!-- Regresar -->
@@ -37,22 +83,37 @@
         <form method="post">
             {% csrf_token %}
             {% for caso, form in formularios_casos_de_prueba %}
-                <div class="card mb-4 shadow-sm">
+                <div class="card shadow-sm card-matriz-verde">
                     <div class="card-header">
                         <strong>{{ caso.fase }}</strong> — {{ caso.caso_de_prueba }}
                     </div>
                     <div class="card-body">
                         <div class="row g-3">
+                            <!-- Estado (select editable) -->
                             <div class="col-md-4">
                                 <label class="form-label">Estado</label>
                                 {{ form.estado }}
                             </div>
+
+                            <!-- Criticidad con estilos -->
                             <div class="col-md-4">
                                 <label class="form-label">Criticidad</label>
-                                {{ form.criticidad }}
+                                <div>
+                                    {% if caso.criticidad|lower == "bloqueante" %}
+                                        <span class="badge text-bg-danger">🔶 Bloqueante</span>
+                                    {% elif caso.criticidad|lower == "critico" or caso.criticidad|lower == "crítico" %}
+                                        <span class="badge text-bg-warning">🟡 Crítico</span>
+                                    {% elif caso.criticidad|lower == "error" %}
+                                        <span class="badge text-bg-danger">🔴 Error</span>
+                                    {% else %}
+                                        <span class="badge text-bg-secondary">Sin clasificar</span>
+                                    {% endif %}
+                                </div>
                             </div>
+
+                            <!-- Nota (editable) -->
                             <div class="col-md-4">
-                                <label class="form-label">Nota</label>
+                                <label for="{{ form.nota.id_for_label }}" class="form-label">Nota</label>
                                 {{ form.nota }}
                             </div>
                         </div>
@@ -68,4 +129,47 @@
 
     </div>
 </body>
+<script>
+    function actualizarColorSelect(select) {
+        const valor = select.value;
+
+        // Limpiar clases anteriores
+        select.classList.remove(
+            'estado-funciona', 'estado-falla-nueva', 'estado-falla-persistente',
+            'estado-na', 'estado-pendiente', 'estado-por-ejecutar'
+        );
+
+        // Aplicar nueva clase según valor
+        switch (valor) {
+            case 'funciona':
+                select.classList.add('estado-funciona');
+                break;
+            case 'falla_nueva':
+                select.classList.add('estado-falla-nueva');
+                break;
+            case 'falla_persistente':
+                select.classList.add('estado-falla-persistente');
+                break;
+            case 'na':
+                select.classList.add('estado-na');
+                break;
+            case 'pendiente':
+                select.classList.add('estado-pendiente');
+                break;
+            case 'por_ejecutar':
+                select.classList.add('estado-por-ejecutar');
+                break;
+        }
+    }
+
+    // Ejecutar al cargar y al cambiar
+    document.querySelectorAll('.estado-select').forEach(function (select) {
+        actualizarColorSelect(select);
+        select.addEventListener('change', function () {
+            actualizarColorSelect(select);
+        });
+    });
+</script>
+
+
 </html>

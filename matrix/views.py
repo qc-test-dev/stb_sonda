@@ -81,3 +81,4 @@ def detalle_matriz(request, matriz_id):
         'formularios_casos_de_prueba': formularios_casos_de_prueba,
         'super_matriz_id': super_matriz_id
     })
+

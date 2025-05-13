@@ -1,6 +1,7 @@
 from django.urls import path
 from . import views
 app_name='matrix_app'
+#matrix_app:dashboard_super_matrices
 urlpatterns = [
     path('', views.super_matriz_dashboard, name='dashboard_super_matrices'),
     path('supermatriz/<int:super_matriz_id>/', views.detalle_super_matriz, name='detalle_super_matriz'),
