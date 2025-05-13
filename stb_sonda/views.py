@@ -7,10 +7,11 @@ from django.contrib.auth.views import LoginView, LogoutView
 from django.http import HttpResponse,StreamingHttpResponse
 import os, time,datetime
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib import messages
 
 # Datos de STBs (hardcodeados por ahora)
 stbs = [
-    {"name": "ZTE B866V2", "ip": "192.168.0.100"},
+    {"name": "ZTE B866V2", "ip": "192.168.0.108"},
     {"name": "ZTE B866V2", "ip": "localhost"},
     {"name": "STB 1", "ip": "172.16.205.62"},
     {"name": "STB 2", "ip": "172.16.216.5"},
@@ -23,38 +24,62 @@ stbs = [
 ]
 
 
-def check_adb_connection(ip, timeout=1):
-    # Primero, verifica si el dispositivo ya está conectado
-    adb_port_tcpip = '5555'
-    ip_port = f"{ip}:{adb_port_tcpip}" 
+def check_device_connected(ip):
+    """Solo verifica si el dispositivo está conectado sin intentar conexión"""
     result = subprocess.run(["adb", "devices"], stdout=subprocess.PIPE, text=True)
-    if ip in result.stdout:
-        return "connected"
-    
-    # Si no está conectado, intenta conectarlo con un timeout
+    # Un dispositivo conectado aparecerá como "ip:5555 device" en la salida
+    device_line = f"{ip}:5555"
+    return "connected" if device_line in result.stdout else "disconnected"
+
+
+def connect_device(ip):
+    """Intenta conectar el dispositivo con un timeout de 1 segundo"""
+    adb_port_tcpip = '5555'
+    ip_port = f"{ip}:{adb_port_tcpip}"
     try:
         result = subprocess.run(
-            ["timeout", str(timeout), "adb", "connect", ip_port],
+            ["adb", "connect", ip_port],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
-            text=True
+            text=True,
+            timeout=1  # Timeout de 1 segundo
         )
-        print(result)
-        return "connected" if "connected to" in result.stdout else "disconnected"
+        return "connected" if "connected to" in result.stdout else "timeout"
     except subprocess.TimeoutExpired:
-        return "disconnected"
+        return "timeout"
+    except Exception as e:
+        print(f"Error connecting to {ip}: {str(e)}")
+        return "error"
+
 
 @login_required
 def home(request):
+    # Verificar solo el estado de conexión de cada STB
     for stb in stbs:
-        stb["status"] = check_adb_connection(stb["ip"])
-    return render(request, "home.html", {"stbs": stbs, "localhost": "10.7.1.201"})
+        stb["status"] = check_device_connected(stb["ip"])
+    
+    return render(request, "home.html", {"stbs": stbs, "localhost": "localhost"})
+
+def connect_adb(request, ip):
+    """Intenta conectar dispositivo y muestra mensajes según resultado"""
+    result = connect_device(ip)
+    
+    if result == "connected":
+        messages.success(request, f"Dispositivo {ip} conectado correctamente")
+    elif result == "timeout":
+        messages.error(request, f"Error: Tiempo de espera agotado al conectar con {ip}")
+    else:
+        messages.error(request, f"Error al conectar con el dispositivo {ip}")
+    
+    # Redireccionar a la página principal después de intentar conectar
+    return redirect('home')
 
 
 def login_redirect(request):
     if not request.user.is_authenticated:
         return redirect("/accounts/login/")
     return redirect("/home/")
+
 # Redirect to login if not authenticated
 
 
