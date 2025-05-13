@@ -1,4 +1,3 @@
-git clone <URL_del_repositorio>
 
 
 CORRER EN AMBIENTE VIRTUAL SOLAMENTE(llamarlo venv, por convención del proyecto)
