@@ -1,6 +1,6 @@
 # forms.py
 from django import forms
-from .models import SuperMatriz, Matriz, CasoDePrueba
+from .models import SuperMatriz, Matriz, CasoDePrueba,Validate,TicketPorLevantar,DetallesValidate
 
 class MatrizForm(forms.ModelForm):
     class Meta:
@@ -43,3 +43,45 @@ class SuperMatrizForm(forms.ModelForm):
 
     nombre = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
     descripcion = forms.CharField(widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 4}))
+class ValidateForm(forms.ModelForm):
+    class Meta:
+        model = Validate
+        fields = '__all__'
+        exclude = ['super_matriz']
+
+class TicketPorLevantarForm(forms.ModelForm):
+    class Meta:
+        model = TicketPorLevantar
+        fields = '__all__'
+        exclude = ['super_matriz']
+
+class ValidateEstadoForm(forms.ModelForm):
+    class Meta:
+        model = Validate
+        fields = ['estado']
+        widgets = {
+            'estado': forms.Select(choices=[
+                ('funciona', 'Funciona'),
+                ('falla_nueva', 'Falla Nueva'),
+                ('falla_persistente', 'Falla Persistente'),
+                ('na', 'N/A'),
+                ('pendiente', 'Pendiente'),
+                ('por_ejecutar', 'Por Ejecutar')
+            ], attrs={'class': 'form-select estado-select'})
+        }
+class DetallesValidateForm(forms.ModelForm):
+    class Meta:
+        model = DetallesValidate
+        fields = ['filtro_RN', 'comentario_RN']
+        widgets = {
+            'filtro_RN': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Escribe el filtro aplicado por RN...'
+            }),
+            'comentario_RN': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 3,
+                'style': 'resize: none;',  # Evita que el textarea se redimensione
+                'placeholder': 'Agrega aquí los labels de RN'
+            }),
+        }
