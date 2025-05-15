@@ -18,23 +18,21 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from . import views
-urlpatterns = [
 
+urlpatterns = [
     path('admin/', admin.site.urls),
-    # Nueva vista Home
     path('home/', views.home, name='home'),
-    # Vista para Logout
     path('get-logs/<str:ip>/', views.get_logs, name='get_logs'),
     path('get-logs_1h/<str:ip>/', views.get_logs_1h, name='get_logs_1h'),
     path('accounts/', include('accounts.urls')),
-    # Ruta por defecto
     path('', views.home, name='home'),
     path('list-apks/<str:ip>/', views.list_apks, name='list_apks'),
     path('install-apk/<str:ip>/', views.install_selected_apk, name='install_selected_apk'),
-    
     path('doc/', include('documents.urls')),
-    path('apk/', include('apks.urls')),
+    path('apk/', include('apks.urls')),\
+    path('connect-adb/<str:ip>/', views.connect_adb, name='connect_adb'),
     path('stream_view/<str:stb_ip>/', views.stream_view, name='stream_view'),
     path('send-adb/', views.send_adb_command, name='send_adb_command'),
     path('matrix/', include('matrix.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+

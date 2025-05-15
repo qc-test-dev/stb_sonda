@@ -70,12 +70,19 @@
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            margin-right: 5px;
         }
 
         .actions button:hover {
             background: #0056b3;
         }
 
+        .connect-btn {
+            background: #28a745 !important;
+        }
+        .connect-btn:hover {
+            background: #218838 !important;
+        }
         .logout-btn {
             background: #dc3545;
             color: #ffffff;
@@ -143,6 +150,25 @@
             color: #fff;
             box-shadow: 0 6px 10px rgb(11, 25, 44,0.5);
         }
+        /* Estilo para mensajes y alertas */
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid transparent;
+            border-radius: 4px;
+        }
+        
+        .alert-success {
+            color: #155724;
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+        
+        .alert-error {
+            color: #721c24;
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
     </style>
 </head>
 
@@ -164,7 +190,16 @@
         </form>
     </div>
     <div class="container">
-        <h2>Dispositivos Conectados</h2>
+        <!-- Mostrar mensajes/alertas -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+        
+        <h2>Dispositivos</h2>
         <ul class="stb-list">
             {% for stb in stbs %}
             <li class="stb-item">
@@ -176,8 +211,6 @@
                     </div>
                 </div>
                 <div class="actions">
-
-
                     {% if stb.status == "connected" %}
 
                     <!-- <a href="http://{{localhost}}:8000/#!action=stream&udid={{ stb.ip }}%3A5555&player=mse&ws=ws%3A%2F%2F{{localhost}}%3A8000%2F%3Faction%3Dproxy-adb%26remote%3Dtcp%253A8886%26udid%3D{{ stb.ip }}%253A5555" target="_blank">
@@ -192,15 +225,19 @@
                         <button>Obtener Logs 24 h</button>
                     </a>
 
-                    <a href="{% url 'get_logs_1h' stb.ip %}">
-                        <button>Obtener Logs última hora</button>
-                    </a>
+
+                        <a href="{% url 'get_logs_1h' stb.ip %}">
+                            <button>Obtener Logs última hora</button>
+                        </a>
 
                     <a href="{% url 'list_apks' stb.ip %}">
                         <button>Instalar APK</button>
                     </a>
+
                     {% else %}
-                    <button disabled>Desconectado</button>
+                        <a href="{% url 'connect_adb' stb.ip %}">
+                            <button class="connect-btn">Conectar</button>
+                        </a>
                     {% endif %}
                 </div>
 
@@ -208,6 +245,21 @@
             {% endfor %}
         </ul>
     </div>
+    
+    <!-- Código JavaScript para ocultar alertas después de 5 segundos -->
+    <script>
+        // Función para ocultar alertas automáticamente
+        document.addEventListener('DOMContentLoaded', function() {
+            var alerts = document.querySelectorAll('.alert');
+            
+            if (alerts.length > 0) {
+                setTimeout(function() {
+                    alerts.forEach(function(alert) {
+                        alert.style.display = 'none';
+                    });
+                }, 5000); // 5000 ms = 5 segundos
+            }
+        });
+    </script>
 </body>
-
 </html>

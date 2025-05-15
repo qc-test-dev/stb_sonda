@@ -63,14 +63,6 @@ def detalle_super_matriz(request, super_matriz_id):
                 validate.save()
                 return redirect('matrix_app:detalle_super_matriz', super_matriz_id=super_matriz.id)
 
-        elif 'crear_ticket' in request.POST:
-            ticket_form = TicketPorLevantarForm(request.POST)
-            if ticket_form.is_valid():
-                ticket = ticket_form.save(commit=False)
-                ticket.super_matriz = super_matriz
-                ticket.save()
-                return redirect('matrix_app:detalle_super_matriz', super_matriz_id=super_matriz.id)
-
     else:
         form = MatrizForm()
         validate_form = ValidateForm()
