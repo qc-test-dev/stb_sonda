@@ -80,7 +80,6 @@ def detalle_super_matriz(request, super_matriz_id):
         'form': form,
         'matrices': matrices,
         'validate_form': validate_form,
-        'ticket_form': ticket_form,
         'validates': validates,
         'tickets': tickets,
     })

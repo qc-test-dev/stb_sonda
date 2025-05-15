@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import SuperMatriz, CasoDePrueba, Matriz,Validate,TicketPorLevantar,DetallesValidate
+from .models import SuperMatriz, CasoDePrueba, Matriz,Validate,DetallesValidate
 
 
 class MatrizInline(admin.TabularInline):
@@ -21,5 +21,4 @@ admin.site.register(SuperMatriz, SuperMatrizAdmin)
 admin.site.register(Matriz, MatrizAdmin)
 admin.site.register(CasoDePrueba)
 admin.site.register(Validate)
-admin.site.register(TicketPorLevantar)
 admin.site.register(DetallesValidate)

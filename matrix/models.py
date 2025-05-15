@@ -58,7 +58,7 @@ class TicketPorLevantar(models.Model):
     desc = models.TextField()
     prioridad = models.CharField(max_length=50)
     nota = models.TextField()
-    url = models.URLField()
+    url = models.URLField(null=True,blank=True)
 
     def __str__(self):
         return f"{self.tester} - {self.ticket_SCT}"
