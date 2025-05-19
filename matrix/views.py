@@ -1,7 +1,7 @@
 import os
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
-
+import random
 from stb_sonda import settings
 from .forms import (
     SuperMatrizForm, MatrizForm, CasoDePruebaForm,
@@ -60,6 +60,13 @@ def detalle_super_matriz(request, super_matriz_id):
                 # Importar desde Excel aplicando los filtrosj
                 ruta_excel_matriz = os.path.join('static', 'excel_files', 'matriz_base.xlsx')
                 importar_matriz_desde_excel(nueva_matriz, ruta_excel_matriz, valores_a_incluir)
+                
+                testers_seleccionados = form.cleaned_data['testers']
+                casos = list(nueva_matriz.casos.all())
+                random.shuffle(casos)
+                for idx, caso in enumerate(casos):
+                    caso.nota = testers_seleccionados[idx % len(testers_seleccionados)]
+                    caso.save()
 
                 return redirect('matrix_app:detalle_super_matriz', super_matriz_id=super_matriz.id)
 

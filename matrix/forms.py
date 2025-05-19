@@ -91,13 +91,28 @@ ALCANCE_CHOICES = [
     ('A,B', 'SMOKE TEST (A,B)'),
     ('A,B,C', 'NA (A,B,C)'),
 ]
-
+TESTERS = [
+    ('Kevin', 'Kevin'),
+    ('Erik', 'Erik'),
+    ('Kyle', 'Kyle'),
+    ('Alberto', 'Alberto'),
+    ('Axel', 'Axel'),
+    ('Luis Rene', 'Luis Rene'),
+    
+    
+]
 class MatrizForm(forms.ModelForm):
     alcance = forms.ChoiceField(
         choices=ALCANCE_CHOICES,
         widget=forms.RadioSelect,
         label='Alcance Evaluación',
         required=True
+    )
+    testers = forms.MultipleChoiceField(
+        choices=TESTERS,
+        widget=forms.CheckboxSelectMultiple,
+        required=True,
+        label="Testers"
     )
 
     class Meta:
