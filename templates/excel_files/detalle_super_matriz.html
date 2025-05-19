@@ -1,4 +1,4 @@
-<!-- templates/detalle_super_matriz.html -->
+<!-- templates/excel_files/detalle_super_matriz.html -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -9,10 +9,13 @@
 <body class="bg-light py-5">
     <div class="container">
         <a href="{% url 'matrix_app:dashboard_super_matrices' %}" class="btn btn-secondary mb-4">⬅ Volver</a>
+
         <h1 class="mb-3">{{ super_matriz.nombre }}</h1>
         <p class="text-muted">{{ super_matriz.descripcion }}</p>
+
         <a href="{% url 'matrix_app:editar_validates' super_matriz.id %}" class="btn btn-outline-primary mb-3">Validates</a>
-        <h3 class="mt-5">Matrices hijas</h3>
+
+        <h3 class="mt-5">Matrices por región</h3>
 
         {% for matriz in matrices %}
             <div class="card mb-3">
@@ -24,12 +27,22 @@
         {% empty %}
             <div class="alert alert-info">No hay matrices aún.</div>
         {% endfor %}
-        
+
         <h3 class="mt-5">Agregar nueva matriz</h3>
         <form method="post" class="card p-3 mt-3">
             {% csrf_token %}
             <input type="hidden" name="crear_matriz" value="1">
-            {{ form.as_p }}
+
+            <div class="mb-3">
+                {{ form.nombre.label_tag }}
+                {{ form.nombre }}
+            </div>
+
+            <div class="mb-3">
+                {{ form.alcance.label_tag }}
+                {{ form.alcance }}
+            </div>
+
             <button type="submit" class="btn btn-primary">Agregar Matriz</button>
         </form>
     </div>

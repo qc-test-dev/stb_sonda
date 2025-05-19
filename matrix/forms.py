@@ -85,3 +85,21 @@ class DetallesValidateForm(forms.ModelForm):
                 'placeholder': 'Agrega aquí los labels de RN'
             }),
         }
+
+ALCANCE_CHOICES = [
+    ('A', 'MVP (A)'),
+    ('A,B', 'SMOKE TEST (A,B)'),
+    ('A,B,C', 'NA (A,B,C)'),
+]
+
+class MatrizForm(forms.ModelForm):
+    alcance = forms.ChoiceField(
+        choices=ALCANCE_CHOICES,
+        widget=forms.RadioSelect,
+        label='Alcance Evaluación',
+        required=True
+    )
+
+    class Meta:
+        model = Matriz
+        fields = ['nombre', 'alcance']

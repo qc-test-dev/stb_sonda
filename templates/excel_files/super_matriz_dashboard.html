@@ -8,10 +8,10 @@
 </head>
 <body class="bg-light py-5">
     <div class="container">
-        <h1 class="mb-4">SuperMatrices</h1>
+        <h1 class="mb-4">Matriz de Validacion</h1>
 
         <div class="card mb-5">
-            <div class="card-header bg-primary text-white">Crear nueva Super Matriz</div>
+            <div class="card-header bg-primary text-white">Crear nueva matriz de validacion</div>
             
             <div class="card-body">
                 <form method="post">
@@ -29,14 +29,14 @@
             </div>
         </div>
 
-        <h2 class="mb-3">Lista de SuperMatrices</h2>
+        <h2 class="mb-3">Lista de matrices de validacion</h2>
         <ul class="list-group">
             {% for matriz in super_matrices %}
                 <li class="list-group-item">
                     <a href="{% url 'matrix_app:detalle_super_matriz' matriz.id %}">{{ matriz.nombre }}</a>
                 </li>
             {% empty %}
-                <li class="list-group-item">No hay SuperMatrices registradas.</li>
+                <li class="list-group-item">No hay matrices registradas.</li>
             {% endfor %}
         </ul>
     </div>

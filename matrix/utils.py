@@ -1,6 +1,6 @@
 import openpyxl
 from .models import CasoDePrueba,Validate
-
+import pandas as pd
 def limpiar(valor):
     if isinstance(valor, str):
         return valor.strip()
@@ -9,9 +9,13 @@ def limpiar(valor):
 import openpyxl
 from .models import CasoDePrueba
 
-def importar_matriz_desde_excel(matriz, ruta_excel):
+import openpyxl
+from .models import CasoDePrueba
+
+def importar_matriz_desde_excel(matriz, ruta_excel, alcances_permitidos=None):
     """
     Importa casos de prueba desde un archivo Excel y los asigna a una matriz.
+    Filtra por alcance si se proporciona una lista de alcances_permitidos (['A', 'B', 'C']).
     Las filas incompletas (sin alcance, fase, caso o criticidad) se ignoran.
     """
     wb = openpyxl.load_workbook(ruta_excel)
@@ -28,6 +32,10 @@ def importar_matriz_desde_excel(matriz, ruta_excel):
         if not (alcance and fase and caso_de_prueba and criticidad):
             continue  # Ignorar la fila si falta alguno
 
+        # Filtrar por alcance si se especifica
+        if alcances_permitidos and alcance not in alcances_permitidos:
+            continue
+
         # Crear el caso de prueba
         CasoDePrueba.objects.create(
             matriz=matriz,
@@ -36,8 +44,9 @@ def importar_matriz_desde_excel(matriz, ruta_excel):
             caso_de_prueba=caso_de_prueba,
             estado="por_ejecutar",
             criticidad=criticidad,
-            nota=nota or ""  # Vacío si es None
+            nota=nota or ""
         )
+
 
 def copiar_casos_de_matriz_base(matriz_origen, matriz_destino):
     """
@@ -54,9 +63,10 @@ def copiar_casos_de_matriz_base(matriz_origen, matriz_destino):
             criticidad=caso.criticidad,
             nota=caso.nota or ""  # Asegura que no sea None
         )
-def importar_matriz_desde_excel(matriz, ruta_excel):
+def importar_matriz_desde_excel(matriz, ruta_excel, alcances_permitidos=None):
     """
     Importa casos de prueba desde un archivo Excel y los asigna a una matriz.
+    Filtra por alcance si se proporciona una lista de alcances_permitidos (['A', 'B', 'C']).
     Las filas incompletas (sin alcance, fase, caso o criticidad) se ignoran.
     """
     wb = openpyxl.load_workbook(ruta_excel)
@@ -69,17 +79,23 @@ def importar_matriz_desde_excel(matriz, ruta_excel):
         criticidad = fila[4]
         nota = fila[5] if len(fila) > 5 else ""
 
-        # Ignorar si falta alguno de los campos obligatorios
-        if not alcance or not fase or not caso_de_prueba or not criticidad:
+        # Validar que los campos clave no estén vacíos
+        if not (alcance and fase and caso_de_prueba and criticidad):
+            continue  # Ignorar la fila si falta alguno
+
+        # Filtrar por alcance si se especifica
+        if alcances_permitidos and alcance not in alcances_permitidos:
             continue
 
+        # Crear el caso de prueba
         CasoDePrueba.objects.create(
             matriz=matriz,
             alcance=alcance,
             fase=fase,
             caso_de_prueba=caso_de_prueba,
+            estado="por_ejecutar",
             criticidad=criticidad,
-            nota=nota
+            nota=nota or ""
         )
 
 
@@ -101,7 +117,7 @@ def importar_validates_desde_excel(super_matriz, ruta_excel):
             empty_rows += 1
             if empty_rows > 5:
                 break
-            print("Fila ignorada por estar incompleta")
+            #print("Fila ignorada por estar incompleta")
             continue
         empty_rows = 0  # Reset counter si hay datos
 
@@ -113,7 +129,7 @@ def importar_validates_desde_excel(super_matriz, ruta_excel):
 
         # Ignorar si falta alguno de los campos obligatorios
         if not tester or not ticket or not descripcion or not prioridad or not estado:
-            print("Fila ignorada por campos vacíos obligatorios")
+            #print("Fila ignorada por campos vacíos obligatorios")
             continue
 
         Validate.objects.create(
@@ -124,4 +140,16 @@ def importar_validates_desde_excel(super_matriz, ruta_excel):
             prioridad=prioridad,
             estado=estado
         )
-        print(f"Validate creado: {tester}")
+        #print(f"Validate creado: {tester}")
+def copiar_casos_filtrados(matriz, ruta_excel, alcance_lista):
+    df = pd.read_excel(ruta_excel)
+    df_filtrado = df[df['Alcance Evaluación'].isin(alcance_lista)]
+
+    for _, fila in df_filtrado.iterrows():
+        CasoDePrueba.objects.create(
+            matriz=matriz,
+            fase=fila.get('Fase', ''),
+            caso_de_prueba=fila.get('Caso de Prueba', ''),
+            criticidad=fila.get('Criticidad', ''),
+            alcance_evaluacion=fila.get('Alcance Evaluación', '')
+        )

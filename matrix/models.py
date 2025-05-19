@@ -13,6 +13,7 @@ class Matriz(models.Model):
     super_matriz = models.ForeignKey(SuperMatriz, on_delete=models.CASCADE, related_name='matrices')
     nombre = models.CharField(max_length=255)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
+    alcances_utilizados = models.CharField(max_length=100, blank=True, null=True)
 
     def __str__(self):
         return self.nombre

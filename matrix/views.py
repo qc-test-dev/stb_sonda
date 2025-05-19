@@ -1,8 +1,15 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from .forms import SuperMatrizForm, MatrizForm, CasoDePruebaForm,ValidateForm,ValidateEstadoForm,DetallesValidateForm
-from .models import SuperMatriz, Matriz,Validate
-from .utils import importar_matriz_desde_excel, copiar_casos_de_matriz_base,importar_validates_desde_excel
 import os
+from django.shortcuts import render, redirect, get_object_or_404
+from django.http import JsonResponse
+
+from stb_sonda import settings
+from .forms import (
+    SuperMatrizForm, MatrizForm, CasoDePruebaForm,
+    ValidateForm, ValidateEstadoForm, DetallesValidateForm
+)
+from .models import SuperMatriz, Matriz, Validate
+from .utils import importar_validates_desde_excel,copiar_casos_filtrados,importar_matriz_desde_excel
+
 
 def super_matriz_dashboard(request):
     super_matrices = SuperMatriz.objects.all()
@@ -10,20 +17,8 @@ def super_matriz_dashboard(request):
     if request.method == 'POST':
         form = SuperMatrizForm(request.POST)
         if form.is_valid():
-            # Crear la SuperMatriz
             super_matriz = form.save()
 
-            # Crear matriz base asociada
-            matriz_base = Matriz.objects.create(
-                super_matriz=super_matriz,
-                nombre="Matriz Base"
-            )
-
-            # Importar casos de prueba
-            ruta_excel_matriz = os.path.join('static', 'excel_files', 'matriz_base.xlsx')
-            importar_matriz_desde_excel(matriz_base, ruta_excel_matriz)
-
-            # Importar validates
             ruta_excel_validates = os.path.join('static', 'excel_files', 'validates.xlsx')
             importar_validates_desde_excel(super_matriz, ruta_excel_validates)
 
@@ -35,6 +30,8 @@ def super_matriz_dashboard(request):
         'form': form,
         'super_matrices': super_matrices
     })
+
+
 def detalle_super_matriz(request, super_matriz_id):
     super_matriz = get_object_or_404(SuperMatriz, id=super_matriz_id)
     matrices = super_matriz.matrices.all()
@@ -42,19 +39,31 @@ def detalle_super_matriz(request, super_matriz_id):
     tickets = super_matriz.tickets_por_levantar.all()
 
     if request.method == 'POST':
+        # Crear Matriz
         if 'crear_matriz' in request.POST:
             form = MatrizForm(request.POST)
             if form.is_valid():
                 nueva_matriz = form.save(commit=False)
                 nueva_matriz.super_matriz = super_matriz
+
+                # Obtener los filtros seleccionados
+                alcance_seleccionado = request.POST.get('alcance')  # Ejemplo: "A,B"
+                valores_a_incluir = set(alcance_seleccionado.split(','))
+
+                for entrada in alcance_seleccionado:
+                    valores_a_incluir.update(entrada.split(','))  # Asegura separar 'A,B' en ['A', 'B']
+
+                # Guardar los valores utilizados como texto
+                nueva_matriz.alcances_utilizados = ",".join(sorted(valores_a_incluir))
                 nueva_matriz.save()
 
-                matriz_base = super_matriz.matrices.first()
-                if matriz_base:
-                    copiar_casos_de_matriz_base(matriz_base, nueva_matriz)
+                # Importar desde Excel aplicando los filtrosj
+                ruta_excel_matriz = os.path.join('static', 'excel_files', 'matriz_base.xlsx')
+                importar_matriz_desde_excel(nueva_matriz, ruta_excel_matriz, valores_a_incluir)
 
                 return redirect('matrix_app:detalle_super_matriz', super_matriz_id=super_matriz.id)
 
+        # Crear Validate
         elif 'crear_validate' in request.POST:
             validate_form = ValidateForm(request.POST)
             if validate_form.is_valid():
@@ -75,18 +84,33 @@ def detalle_super_matriz(request, super_matriz_id):
         'validates': validates,
         'tickets': tickets,
     })
+
 def detalle_matriz(request, matriz_id):
     matriz = get_object_or_404(Matriz, id=matriz_id)
     casos_de_prueba = matriz.casos.all()
     super_matriz_id = matriz.super_matriz.id
 
+    # Obtener lista de filtros si existen
+    alcances_lista = []
+    if matriz.alcances_utilizados:
+        alcances_lista = matriz.alcances_utilizados.split(',')
+
     if request.method == 'POST':
+        success = True
         for caso in casos_de_prueba:
             form = CasoDePruebaForm(request.POST, instance=caso, prefix=f"caso_{caso.id}")
             if form.is_valid():
                 form.save()
+            else:
+                success = False
 
-        return redirect('matrix_app:detalle_matriz', matriz_id=matriz.id)
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            if success:
+                return JsonResponse({'status': 'ok'})
+            else:
+                return JsonResponse({'status': 'error', 'message': 'Formulario inválido'}, status=400)
+        else:
+            return redirect('matrix_app:detalle_matriz', matriz_id=matriz.id)
 
     formularios_casos_de_prueba = [
         (caso, CasoDePruebaForm(instance=caso, prefix=f"caso_{caso.id}"))
@@ -96,8 +120,12 @@ def detalle_matriz(request, matriz_id):
     return render(request, 'excel_files/detalle_matriz.html', {
         'matriz': matriz,
         'formularios_casos_de_prueba': formularios_casos_de_prueba,
-        'super_matriz_id': super_matriz_id
+        'super_matriz_id': super_matriz_id,
+        'alcances_lista': alcances_lista,
     })
+
+
+
 def editar_validates(request, super_matriz_id):
     super_matriz = get_object_or_404(SuperMatriz, id=super_matriz_id)
     validates = Validate.objects.filter(super_matriz=super_matriz)
@@ -119,12 +147,14 @@ def editar_validates(request, super_matriz_id):
         'super_matriz': super_matriz,
         'formularios_validates': formularios
     })
+
+
 def detalles_validate_modal(request, super_matriz_id):
-    super_matriz = SuperMatriz.objects.get(id=super_matriz_id)
+    super_matriz = get_object_or_404(SuperMatriz, id=super_matriz_id)
 
     if request.method == 'POST':
         form = DetallesValidateForm(request.POST)
-        if form.is_valid():
+        if form.is_valid(): 
             detalles = form.save(commit=False)
             detalles.super_matriz = super_matriz
             detalles.save()
@@ -136,3 +166,4 @@ def detalles_validate_modal(request, super_matriz_id):
         'form': form,
         'super_matriz': super_matriz
     })
+
