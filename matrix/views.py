@@ -38,6 +38,22 @@ def detalle_super_matriz(request, super_matriz_id):
     validates = super_matriz.validates.all()
     tickets = super_matriz.tickets_por_levantar.all()
 
+    matrices_info = []
+    for matriz in matrices:
+        casos = matriz.casos.all()
+        total_casos = casos.count()
+        estados_interes = ['funciona', 'falla_nueva', 'falla_persistente']
+        casos_filtrados = casos.filter(estado__in=estados_interes).count()
+
+        porcentaje = (casos_filtrados / total_casos * 100) if total_casos > 0 else 0
+
+        matrices_info.append({
+            'matriz': matriz,
+            'total_casos': total_casos,
+            'casos_filtrados': casos_filtrados,
+            'porcentaje': round(porcentaje, 2),
+        })
+
     if request.method == 'POST':
         # Crear Matriz
         if 'crear_matriz' in request.POST:
@@ -46,30 +62,23 @@ def detalle_super_matriz(request, super_matriz_id):
                 nueva_matriz = form.save(commit=False)
                 nueva_matriz.super_matriz = super_matriz
 
-                # Obtener los filtros seleccionados
-                alcance_seleccionado = request.POST.get('alcance')  # Ejemplo: "A,B"
-                valores_a_incluir = set(alcance_seleccionado.split(','))
+                alcance_seleccionado = request.POST.get('alcance', '')
+                valores_a_incluir = set(alcance_seleccionado.split(',')) if alcance_seleccionado else set()
 
-                for entrada in alcance_seleccionado:
-                    valores_a_incluir.update(entrada.split(','))  # Asegura separar 'A,B' en ['A', 'B']
-
-                # Guardar los valores utilizados como texto
                 nueva_matriz.alcances_utilizados = ",".join(sorted(valores_a_incluir))
                 nueva_matriz.save()
 
-                # Importar desde Excel aplicando los filtrosj
                 ruta_excel_matriz = os.path.join('static', 'excel_files', 'matriz_base.xlsx')
                 importar_matriz_desde_excel(nueva_matriz, ruta_excel_matriz, valores_a_incluir)
-                
-                testers_seleccionados = form.cleaned_data['testers']
+
+                testers_seleccionados = form.cleaned_data.get('testers', [])
                 casos = list(nueva_matriz.casos.all())
                 random.shuffle(casos)
                 for idx, caso in enumerate(casos):
-                    caso.nota = testers_seleccionados[idx % len(testers_seleccionados)]
+                    caso.nota = testers_seleccionados[idx % len(testers_seleccionados)] if testers_seleccionados else ''
                     caso.save()
 
                 return redirect('matrix_app:detalle_super_matriz', super_matriz_id=super_matriz.id)
-
         # Crear Validate
         elif 'crear_validate' in request.POST:
             validate_form = ValidateForm(request.POST)
@@ -78,15 +87,14 @@ def detalle_super_matriz(request, super_matriz_id):
                 validate.super_matriz = super_matriz
                 validate.save()
                 return redirect('matrix_app:detalle_super_matriz', super_matriz_id=super_matriz.id)
-
     else:
         form = MatrizForm()
         validate_form = ValidateForm()
 
     return render(request, 'excel_files/detalle_super_matriz.html', {
         'super_matriz': super_matriz,
+        'matrices_info': matrices_info,
         'form': form,
-        'matrices': matrices,
         'validate_form': validate_form,
         'validates': validates,
         'tickets': tickets,
