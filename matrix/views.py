@@ -54,6 +54,10 @@ def detalle_super_matriz(request, super_matriz_id):
             'porcentaje': round(porcentaje, 2),
         })
 
+    # Inicializar formularios por defecto
+    form = MatrizForm()
+    validate_form = ValidateForm()
+
     if request.method == 'POST':
         # Crear Matriz
         if 'crear_matriz' in request.POST:
@@ -79,6 +83,7 @@ def detalle_super_matriz(request, super_matriz_id):
                     caso.save()
 
                 return redirect('matrix_app:detalle_super_matriz', super_matriz_id=super_matriz.id)
+
         # Crear Validate
         elif 'crear_validate' in request.POST:
             validate_form = ValidateForm(request.POST)
@@ -87,9 +92,6 @@ def detalle_super_matriz(request, super_matriz_id):
                 validate.super_matriz = super_matriz
                 validate.save()
                 return redirect('matrix_app:detalle_super_matriz', super_matriz_id=super_matriz.id)
-    else:
-        form = MatrizForm()
-        validate_form = ValidateForm()
 
     return render(request, 'excel_files/detalle_super_matriz.html', {
         'super_matriz': super_matriz,
@@ -99,6 +101,7 @@ def detalle_super_matriz(request, super_matriz_id):
         'validates': validates,
         'tickets': tickets,
     })
+
 
 def detalle_matriz(request, matriz_id):
     matriz = get_object_or_404(Matriz, id=matriz_id)
