@@ -6,4 +6,6 @@ shared/
 static/videos/
 static/*.apk
 *.apk
-media/apk/*.apk
+static/apks
+static/docs
+static/excel_files

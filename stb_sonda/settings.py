@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'stb_manager',
     'documents',
     'apks',
+    'matrix',
 ]
 
 MIDDLEWARE = [
@@ -152,6 +153,9 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 STATIC_URL = '/static/'  # Esto ya debería estar en tu settings.py
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+EXCEL_DIR = os.path.join(BASE_DIR, 'static', 'excel_files')
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 5000
 
 
 

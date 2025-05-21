@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ matriz.nombre }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            color: #212529;
+            font-size: 1.2rem;
+            font-weight: 400;
+        }
+
+        .container {
+            max-width: 900px;
+        }
+
+        .card {
+            border: 1px solid #dee2e6;
+            border-radius: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header {
+            background-color: #e9ecef;
+            border-bottom: 1px solid #dee2e6;
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+
+        .form-label {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .badge {
+            font-size: 0.9rem;
+            border-radius: 0.5rem;
+        }
+
+        .sticky-save-button {
+            position: fixed;
+            bottom: 20px;
+            right: 30px;
+            z-index: 1050;
+            font-size: 1.1rem;
+            font-weight: 700;
+            padding: 0.6rem 1.2rem;
+        }
+
+        /* TUS COLORES PERSONALIZADOS */
+        .estado-funciona {
+            background-color: #d4edda !important;
+            color: #155724 !important;
+        }
+
+        .estado-falla-nueva {
+            background-color: #c82333 !important;
+            color: white !important;
+        }
+
+        .estado-falla-persistente {
+            background-color: #f8d7da !important;
+            color: #721c24 !important;
+        }
+
+        .estado-na {
+            background-color: #e2e3e5 !important;
+            color: #004085 !important;
+        }
+
+        .estado-pendiente {
+            background-color: #fd7e14 !important;
+            color: white !important;
+        }
+
+        .estado-por-ejecutar {
+            background-color: #ffeeba !important;
+            color: #856404 !important;
+        }
+
+        .form-select.estado-select {
+            border-radius: 0.375rem;
+        }
+
+        .form-control {
+            border-radius: 0.375rem;
+        }
+    </style>
+</head>
+<body class="py-4">
+<div class="container">
+
+    <!-- Regresar -->
+    <a href="{% url 'matrix_app:detalle_super_matriz' super_matriz_id %}" class="btn btn-link mb-4">← Volver</a>
+
+    <!-- Título -->
+    <h2 class="mb-3">{{ matriz.nombre }}</h2>
+    {% if alcances_lista %}
+    <p>Filtros usados:</p>
+    <ul>
+    {% for alcance in alcances_lista %}
+        <li>{{ alcance }}</li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No hay filtros aplicados.</p>
+{% endif %}
+    <p class="text-muted">Editar los estados y notas de los casos de prueba.</p>
+
+    <form id="form-casos" method="post">
+        {% csrf_token %}
+        {% for caso, form in formularios_casos_de_prueba %}
+            <div class="card">
+                <div class="card-header">
+                    {{ caso.fase }} — {{ caso.caso_de_prueba }}
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label">Estado</label>
+                        {{ form.estado }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Criticidad</label>
+                        {% if caso.criticidad|lower == "bloqueante" %}
+                            <span class="badge bg-danger">🔶 Bloqueante</span>
+                        {% elif caso.criticidad|lower == "critico" or caso.criticidad|lower == "crítico" %}
+                            <span class="badge bg-warning text-dark">🟡 Crítico</span>
+                        {% elif caso.criticidad|lower == "error" %}
+                            <span class="badge bg-danger">🔴 Error</span>
+                        {% else %}
+                            <span class="badge bg-secondary">Sin clasificar</span>
+                        {% endif %}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Nota</label>
+                        {{ form.nota }}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+
+        <button type="submit" class="btn btn-success sticky-save-button">
+            💾 Guardar
+        </button>
+    </form>
+
+    <div id="mensaje" class="alert alert-success mt-3 d-none" role="alert">
+        Cambios guardados correctamente.
+    </div>
+
+</div>
+
+<script>
+    function actualizarColorSelect(select) {
+        const valor = select.value;
+        select.classList.remove(
+            'estado-funciona', 'estado-falla-nueva', 'estado-falla-persistente',
+            'estado-na', 'estado-pendiente', 'estado-por-ejecutar'
+        );
+        switch (valor) {
+            case 'funciona':
+                select.classList.add('estado-funciona');
+                break;
+            case 'falla_nueva':
+                select.classList.add('estado-falla-nueva');
+                break;
+            case 'falla_persistente':
+                select.classList.add('estado-falla-persistente');
+                break;
+            case 'na':
+                select.classList.add('estado-na');
+                break;
+            case 'pendiente':
+                select.classList.add('estado-pendiente');
+                break;
+            case 'por_ejecutar':
+                select.classList.add('estado-por-ejecutar');
+                break;
+        }
+    }
+
+    document.querySelectorAll('.estado-select').forEach(function (select) {
+        actualizarColorSelect(select);
+        select.addEventListener('change', function () {
+            actualizarColorSelect(select);
+        });
+    });
+
+    // AJAX para enviar formulario sin recargar ni cambiar la página
+    document.getElementById('form-casos').addEventListener('submit', function(event){
+        event.preventDefault(); // evitar recarga
+
+        const form = event.target;
+        const formData = new FormData(form);
+
+        fetch(window.location.href, {
+            method: 'POST',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+            },
+            body: formData,
+            credentials: 'same-origin'
+        })
+        .then(response => {
+            if (!response.ok) throw new Error('Error en la petición');
+            return response.text();
+        })
+        .then(data => {
+            // Mostrar mensaje de éxito temporalmente
+            const mensaje = document.getElementById('mensaje');
+            mensaje.classList.remove('d-none');
+            setTimeout(() => mensaje.classList.add('d-none'), 3000);
+        })
+        .catch(error => {
+            alert('Hubo un error al guardar. Intenta de nuevo.');
+            console.error(error);
+        });
+    });
+</script>
+</body>
+</html>
