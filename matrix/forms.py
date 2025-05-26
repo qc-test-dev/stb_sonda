@@ -101,6 +101,13 @@ TESTERS = [
     
     
 ]
+REGIONES = [
+    ('Peru', 'Peru'),
+    ('Argentina', 'Argentina'),
+    ('Dominicana', 'Dominicana'),
+    ('Guatemala', 'Guatemala'),
+    ('Panama', 'Panama'),    
+]
 class MatrizForm(forms.ModelForm):
     alcance = forms.ChoiceField(
         choices=ALCANCE_CHOICES,
@@ -114,7 +121,33 @@ class MatrizForm(forms.ModelForm):
         required=True,
         label="Testers"
     )
+    regiones = forms.MultipleChoiceField(
+        choices=REGIONES,
+        widget=forms.CheckboxSelectMultiple,
+        required=True,
+        label="Regiones"
+    )
 
     class Meta:
         model = Matriz
         fields = ['nombre', 'alcance']
+Prioridad_CHOICES = [
+    ('Bloqueante', 'Bloqueante'),
+    ('Crítico', 'Crítico'),
+]
+class TicketPorLevantarForm(forms.ModelForm):
+    tester = forms.ChoiceField(choices=TESTERS, widget=forms.Select(attrs={'class': 'form-select'}))
+    Region = forms.ChoiceField(choices=REGIONES, widget=forms.Select(attrs={'class': 'form-select'}))
+    prioridad = forms.ChoiceField(choices=Prioridad_CHOICES, widget=forms.Select(attrs={'class': 'form-select'}))
+
+    class Meta:
+        model = TicketPorLevantar
+        fields = ['tester', 'ticket_SCT', 'BRF', 'Region', 'prioridad', 'desc', 'nota', 'url']
+        widgets = {
+            'ticket_SCT': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ticket SCT'}),
+            'BRF': forms.TextInput(attrs={'class': 'form-control'}),
+            'prioridad': forms.TextInput(attrs={'class': 'form-control'}),
+            'desc': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
+            'nota': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
+            'url': forms.URLInput(attrs={'class': 'form-control'}),
+        }

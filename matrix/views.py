@@ -5,10 +5,11 @@ import random
 from stb_sonda import settings
 from .forms import (
     SuperMatrizForm, MatrizForm, CasoDePruebaForm,
-    ValidateForm, ValidateEstadoForm, DetallesValidateForm
+    ValidateForm, ValidateEstadoForm, DetallesValidateForm,
+    TicketPorLevantarForm
 )
-from .models import SuperMatriz, Matriz, Validate
-from .utils import importar_validates_desde_excel,copiar_casos_filtrados,importar_matriz_desde_excel
+from .models import SuperMatriz, Matriz, Validate,TicketPorLevantar
+from .utils import importar_validates_desde_excel,importar_matriz_desde_excel
 
 
 def super_matriz_dashboard(request):
@@ -76,10 +77,14 @@ def detalle_super_matriz(request, super_matriz_id):
                 importar_matriz_desde_excel(nueva_matriz, ruta_excel_matriz, valores_a_incluir)
 
                 testers_seleccionados = form.cleaned_data.get('testers', [])
+                regiones_seleccionados = form.cleaned_data.get('regiones', [])
                 casos = list(nueva_matriz.casos.all())
+                random.shuffle(regiones_seleccionados)
+                random.shuffle(testers_seleccionados)
                 random.shuffle(casos)
                 for idx, caso in enumerate(casos):
                     caso.nota = testers_seleccionados[idx % len(testers_seleccionados)] if testers_seleccionados else ''
+                    caso.nota+='-'+regiones_seleccionados[idx % len(regiones_seleccionados)] if regiones_seleccionados else ''
                     caso.save()
 
                 return redirect('matrix_app:detalle_super_matriz', super_matriz_id=super_matriz.id)
@@ -99,7 +104,6 @@ def detalle_super_matriz(request, super_matriz_id):
         'form': form,
         'validate_form': validate_form,
         'validates': validates,
-        'tickets': tickets,
     })
 
 
@@ -112,6 +116,14 @@ def detalle_matriz(request, matriz_id):
     alcances_lista = []
     if matriz.alcances_utilizados:
         alcances_lista = matriz.alcances_utilizados.split(',')
+
+    # Obtener lista única de testers desde los casos
+    testers_disponibles = casos_de_prueba.values_list('nota', flat=True).distinct()
+
+    # Filtrar por tester si viene en la URL (GET)
+    tester_filtrado = request.GET.get('tester')
+    if tester_filtrado:
+        casos_de_prueba = casos_de_prueba.filter(nota=tester_filtrado)
 
     if request.method == 'POST':
         success = True
@@ -140,6 +152,8 @@ def detalle_matriz(request, matriz_id):
         'formularios_casos_de_prueba': formularios_casos_de_prueba,
         'super_matriz_id': super_matriz_id,
         'alcances_lista': alcances_lista,
+        'testers_disponibles': testers_disponibles,
+        'tester_filtrado': tester_filtrado,  # por si quieres marcar cuál está activo
     })
 
 
@@ -183,5 +197,25 @@ def detalles_validate_modal(request, super_matriz_id):
     return render(request, 'excel_files/detalles_validate_modal.html', {
         'form': form,
         'super_matriz': super_matriz
+    })
+
+def tickets_por_levantar_view(request, super_matriz_id):
+    super_matriz = get_object_or_404(SuperMatriz, id=super_matriz_id)
+    tickets = TicketPorLevantar.objects.filter(super_matriz=super_matriz)
+
+    if request.method == 'POST':
+        form = TicketPorLevantarForm(request.POST)
+        if form.is_valid():
+            nuevo_ticket = form.save(commit=False)
+            nuevo_ticket.super_matriz = super_matriz
+            nuevo_ticket.save()
+            return redirect('matrix_app:tickets_por_levantar', super_matriz_id=super_matriz.id)
+    else:
+        form = TicketPorLevantarForm()
+
+    return render(request, 'excel_files/tickets_por_levantar.html', {
+        'super_matriz': super_matriz,
+        'tickets': tickets,
+        'form': form,
     })
 

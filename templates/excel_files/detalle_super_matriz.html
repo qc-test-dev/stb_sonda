@@ -21,7 +21,8 @@
         <p class="text-muted">{{ super_matriz.descripcion }}</p>
 
         <a href="{% url 'matrix_app:editar_validates' super_matriz.id %}" class="btn btn-outline-primary mb-3">Validates</a>
-
+        <a href="{% url 'matrix_app:tickets_por_levantar' super_matriz.id %}" class="btn btn-outline-primary mb-3">tickets_por_levantar</a>
+        
         <div class="row mt-5">
             <!-- Formulario de nueva matriz -->
             <div class="col-md-4">
@@ -43,6 +44,10 @@
                     <div class="mb-3">
                         <label for="id_testers" class="form-label">Seleccionar Testers</label>
                         {{ form.testers }}
+                    </div>
+                    <div class="mb-3">
+                        <label for="id_regiones" class="form-label">Seleccionar Region</label>
+                        {{ form.regiones}}
                     </div>
 
                     <button type="submit" class="btn btn-primary w-100">Agregar Matriz</button>

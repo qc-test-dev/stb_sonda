@@ -8,8 +8,7 @@
         body {
             background-color: #f8f9fa;
             color: #212529;
-            font-size: 1.2rem;
-            font-weight: 400;
+            font-size: 1.1rem;
         }
 
         .container {
@@ -26,12 +25,11 @@
             background-color: #e9ecef;
             border-bottom: 1px solid #dee2e6;
             font-weight: 700;
-            font-size: 1.25rem;
+            font-size: 1.2rem;
         }
 
         .form-label {
             font-weight: 700;
-            font-size: 1.1rem;
         }
 
         .badge {
@@ -39,17 +37,7 @@
             border-radius: 0.5rem;
         }
 
-        .sticky-save-button {
-            position: fixed;
-            bottom: 20px;
-            right: 30px;
-            z-index: 1050;
-            font-size: 1.1rem;
-            font-weight: 700;
-            padding: 0.6rem 1.2rem;
-        }
-
-        /* TUS COLORES PERSONALIZADOS */
+        /* Colores personalizados para estados */
         .estado-funciona {
             background-color: #d4edda !important;
             color: #155724 !important;
@@ -80,34 +68,65 @@
             color: #856404 !important;
         }
 
-        .form-select.estado-select {
-            border-radius: 0.375rem;
+        .sticky-action-bar {
+            position: fixed;
+            bottom: 20px;
+            right: 30px;
+            z-index: 1050;
+            display: flex;
+            gap: 10px;
         }
 
-        .form-control {
-            border-radius: 0.375rem;
+        .sticky-action-bar button,
+        .sticky-action-bar a {
+            font-size: 1rem;
+            font-weight: 600;
+            padding: 0.6rem 1.2rem;
+            border-radius: 0.5rem;
         }
+
+        .alert-position {
+            position: fixed;
+            bottom: 80px;
+            right: 30px;
+            z-index: 1100;
+        }
+
     </style>
 </head>
 <body class="py-4">
 <div class="container">
 
-    <!-- Regresar -->
-    <a href="{% url 'matrix_app:detalle_super_matriz' super_matriz_id %}" class="btn btn-link mb-4">← Volver</a>
-
     <!-- Título -->
     <h2 class="mb-3">{{ matriz.nombre }}</h2>
+
     {% if alcances_lista %}
-    <p>Filtros usados:</p>
-    <ul>
-    {% for alcance in alcances_lista %}
-        <li>{{ alcance }}</li>
-    {% endfor %}
+        <p>Filtros usados:</p>
+        <ul>
+        {% for alcance in alcances_lista %}
+            <li>{{ alcance }}</li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No hay filtros aplicados.</p>
+    {% endif %}
+
+    <h4 class="mt-4">Filtrar por tester:</h4>
+    <ul class="list-inline">
+        <li class="list-inline-item">
+            <a href="{% url 'matrix_app:detalle_matriz' matriz.id %}" class="btn btn-outline-primary btn-sm">Todos</a>
+        </li>
+        {% for tester in testers_disponibles %}
+            <li class="list-inline-item">
+                <a href="{% url 'matrix_app:detalle_matriz' matriz.id %}?tester={{ tester }}"
+                   class="btn btn-outline-secondary btn-sm {% if tester == tester_filtrado %}active{% endif %}">
+                    {{ tester }}
+                </a>
+            </li>
+        {% endfor %}
     </ul>
-{% else %}
-    <p>No hay filtros aplicados.</p>
-{% endif %}
-    <p class="text-muted">Editar los estados y notas de los casos de prueba.</p>
+
+    <p class="text-muted mt-3">Editar los estados y notas de los casos de prueba.</p>
 
     <form id="form-casos" method="post">
         {% csrf_token %}
@@ -140,13 +159,18 @@
                 </div>
             </div>
         {% endfor %}
-
-        <button type="submit" class="btn btn-success sticky-save-button">
-            💾 Guardar
-        </button>
     </form>
 
-    <div id="mensaje" class="alert alert-success mt-3 d-none" role="alert">
+    <div class="sticky-action-bar">
+        <button type="submit" class="btn btn-success" form="form-casos">
+            💾 Guardar
+        </button>
+        <a href="{% url 'matrix_app:detalle_super_matriz' super_matriz_id %}" class="btn btn-secondary">
+            ← Volver
+        </a>
+    </div>
+
+    <div id="mensaje" class="alert alert-success d-none alert-position" role="alert">
         Cambios guardados correctamente.
     </div>
 
@@ -188,11 +212,8 @@
         });
     });
 
-    // AJAX para enviar formulario sin recargar ni cambiar la página
-    document.getElementById('form-casos').addEventListener('submit', function(event){
-        event.preventDefault(); // evitar recarga
-
-        const form = event.target;
+    function enviarFormulario() {
+        const form = document.getElementById('form-casos');
         const formData = new FormData(form);
 
         fetch(window.location.href, {
@@ -208,16 +229,30 @@
             return response.text();
         })
         .then(data => {
-            // Mostrar mensaje de éxito temporalmente
             const mensaje = document.getElementById('mensaje');
-            mensaje.classList.remove('d-none');
+            mensaje.classList.remove('d-none', 'alert-danger');
+            mensaje.classList.add('alert-success');
+            mensaje.textContent = 'Cambios guardados automáticamente.';
             setTimeout(() => mensaje.classList.add('d-none'), 3000);
         })
         .catch(error => {
-            alert('Hubo un error al guardar. Intenta de nuevo.');
+            const mensaje = document.getElementById('mensaje');
+            mensaje.classList.remove('d-none', 'alert-success');
+            mensaje.classList.add('alert-danger');
+            mensaje.textContent = '❌ Error al guardar automáticamente.';
             console.error(error);
         });
+    }
+
+    document.getElementById('form-casos').addEventListener('submit', function(event){
+        event.preventDefault();
+        enviarFormulario();
     });
+
+    // Guardado automático cada 15 segundos (15000 ms)
+    setInterval(() => {
+        enviarFormulario();
+    }, 15000);
 </script>
 </body>
 </html>

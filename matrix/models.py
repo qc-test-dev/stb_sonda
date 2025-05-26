@@ -51,10 +51,9 @@ class Validate(models.Model):
 
 class TicketPorLevantar(models.Model):
     super_matriz = models.ForeignKey(SuperMatriz, on_delete=models.CASCADE, related_name='tickets_por_levantar')
-    matriz = models.ForeignKey(Matriz, on_delete=models.CASCADE, related_name='tickets_por_levantar', null=True, blank=True)
     tester = models.CharField(max_length=100)
     ticket_SCT = models.CharField(max_length=100)
-    BRF = models.CharField(max_length=100)
+    BRF = models.CharField(max_length=100,blank=True,null=True)
     Region = models.CharField(max_length=100)
     desc = models.TextField()
     prioridad = models.CharField(max_length=50)
