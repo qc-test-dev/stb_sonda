@@ -13,4 +13,4 @@ Pillow
 pylint 
 pandas 
 numpy
-xlsxl
+openpyxl

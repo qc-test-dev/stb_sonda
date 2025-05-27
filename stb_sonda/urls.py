@@ -28,11 +28,11 @@ urlpatterns = [
     path('', views.home, name='home'),
     path('list-apks/<str:ip>/', views.list_apks, name='list_apks'),
     path('install-apk/<str:ip>/', views.install_selected_apk, name='install_selected_apk'),
-    path('doc/', include('documents.urls')),
+   
     path('apk/', include('apks.urls')),\
     path('connect-adb/<str:ip>/', views.connect_adb, name='connect_adb'),
     path('stream_view/<str:stb_ip>/', views.stream_view, name='stream_view'),
     path('send-adb/', views.send_adb_command, name='send_adb_command'),
-    path('matrix/', include('matrix.urls')),
+    
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
