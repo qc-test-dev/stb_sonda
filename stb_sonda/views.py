@@ -1,4 +1,6 @@
 # Django views.py
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
@@ -6,8 +8,10 @@ import subprocess
 from django.contrib.auth.views import LoginView, LogoutView
 from django.http import HttpResponse,StreamingHttpResponse
 import os, time,datetime
+from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
+import json
 
 # Datos de STBs (hardcodeados por ahora)
 stbs = [
@@ -73,7 +77,6 @@ def connect_adb(request, ip):
     
     # Redireccionar a la página principal después de intentar conectar
     return redirect('home')
-
 
 def login_redirect(request):
     if not request.user.is_authenticated:
@@ -146,9 +149,9 @@ def get_logs_1h(request, ip):
 # Instalar una APK desde la carpeta static
 def install_apk(request, ip):
     try:
-        apk_path = os.path.join("static", "app.apk")  # Ruta de la APK en static
+        apk_path = os.path.join("static/apks", "app.apk")  # Ruta de la APK en static
         if not os.path.exists(apk_path):
-            return HttpResponse("APK no encontrada en la carpeta static", status=404)
+            return HttpResponse("APK no encontrada en la carpeta static/apks", status=404)
         # Comando ADB para instalar la APK
         result = subprocess.run(
             ["adb", "-s", ip, "install", apk_path],
@@ -164,7 +167,7 @@ def install_apk(request, ip):
     
 
 def list_apks(request, ip):
-    apk_folder = os.path.join("static")  # Carpeta donde se almacenan las APKs
+    apk_folder = os.path.join("static/apks")  # Carpeta donde se almacenan las APKs
     try:
         # Lista las APKs disponibles en la carpeta static
         apks = [f for f in os.listdir(apk_folder) if f.endswith(".apk")]
@@ -177,7 +180,7 @@ def list_apks(request, ip):
 def install_selected_apk(request, ip):
     if request.method == "POST":
         apk_name = request.POST.get("apk")
-        apk_path = os.path.join("static", apk_name)
+        apk_path = os.path.join("static/apks", apk_name)
 
         if not os.path.exists(apk_path):
             return HttpResponse(f"APK '{apk_name}' no encontrada en la carpeta static", status=404)
@@ -197,3 +200,27 @@ def install_selected_apk(request, ip):
             return HttpResponse(f"Error: {str(e)}", status=500)
     else:
         return HttpResponse("Método no permitido", status=405)
+from django.shortcuts import render
+
+def stream_view(request, stb_ip):
+    stb = {
+        'ip': stb_ip,
+        'name': f'STB {stb_ip}'
+    }
+    context = {
+        'stb': stb,
+        'host': 'localhost',  # O dinámicamente: request.get_host().split(':')[0]
+    }
+    return render(request, 'live-tv/stream_view.html', context)
+@csrf_exempt
+def send_adb_command(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        command = data.get("command")
+        ip = data.get("ip")
+        if command and ip:
+            full_cmd = f'adb -s {ip}:5555 shell {command}'
+            os.system(full_cmd)
+            return JsonResponse({"message": f"Comando enviado: {command}"})
+        return JsonResponse({"message": "Faltan datos"}, status=400)
+    return JsonResponse({"message": "Método no permitido"}, status=405)

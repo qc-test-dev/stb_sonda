@@ -15,27 +15,29 @@
     </form>    
     <div class="container-btn">
         <a href="{% url 'home'%}" class="back-btn">Volver al Panel</a>
-        <a href="{% url 'doc_app:createDoc'%}" class="create-btn">Subir un documento</a>
     </div>
 </div>
-<div class="container">
-    <h2>Documentos Disponibles</h2>
 
+<div class="container">
+{% if archivos %}
+<div class="container">
+    <h2>Documentos en Carpeta Estática</h2>
     <ul class="doc-list">
-        {% for doc in docs %}
+        {% for archivo in archivos %}
         <li class="doc-item">
             <div class="text">
-                <h4>{{ doc.title }}</h4>
-                <p>{{ doc.description }}</p>
-            </div>  
+                <h4>{{ archivo|slice:"5:" }}</h4>
+            </div>
             <div class="btn">
-                <a href="{{ doc.document.url }}" target="_blank" class="view-btn">Ver</a>
-                <a href="{{ doc.document.url }}" class="download-btn" download>Descargar</a>
+                <a href="{% static archivo %}" target="_blank" class="view-btn">Ver</a>
+                <a href="{% static archivo %}" download class="download-btn">Descargar</a>
             </div>
         </li>
         {% endfor %}
     </ul>
 </div>
+{% endif %}
+
 {% if is_paginated %}
 <div class="pagination">
     {% if page_obj.has_previous %}

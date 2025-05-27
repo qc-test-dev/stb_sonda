@@ -17,10 +17,10 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from .views import ApkListView,ApkCreateView,ListBySearchApksListView
+from .views import ApkListView,ListBySearchApksListView
 app_name='apk_app'
 urlpatterns = [
     path("apks/", ApkListView.as_view(), name="allApks"),
-    path("crearApk/", ApkCreateView.as_view(), name="createApk"),
+    #path("crearApk/", ApkCreateView.as_view(), name="createApk"),
     path("buscar/", ListBySearchApksListView.as_view(), name="search")
 ]
