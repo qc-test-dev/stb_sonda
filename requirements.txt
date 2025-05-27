@@ -11,3 +11,6 @@ sqlparse
 psycopg2-binary
 Pillow
 pylint 
+pandas 
+numpy
+xlsxl

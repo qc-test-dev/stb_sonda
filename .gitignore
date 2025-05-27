@@ -9,3 +9,4 @@ static/*.apk
 static/apks
 static/docs
 static/excel_files
+db.sqlite3
