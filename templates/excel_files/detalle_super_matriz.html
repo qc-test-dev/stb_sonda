@@ -1,96 +1,85 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>{{ super_matriz.nombre }}</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        .progress {
-            height: 20px;
-        }
-        .progress-bar {
-            font-weight: bold;
-        }
-    </style>
-</head>
-<body class="bg-light py-5">
-    <div class="container">
-        <a href="{% url 'matrix_app:dashboard_super_matrices' %}" class="btn btn-secondary mb-4">⬅ Volver</a>
+{% extends 'base.html' %}
+{% load static %}
 
-        <h1 class="mb-3">{{ super_matriz.nombre }}</h1>
-        <p class="text-muted">{{ super_matriz.descripcion }}</p>
+{% block title %}
+{{ super_matriz.nombre }}
+{% endblock title %}
 
-        <a href="{% url 'matrix_app:editar_validates' super_matriz.id %}" class="btn btn-outline-primary mb-3">Validates</a>
-        <a href="{% url 'matrix_app:tickets_por_levantar' super_matriz.id %}" class="btn btn-outline-primary mb-3">tickets_por_levantar</a>
-        
-        <div class="row mt-5">
-            <!-- Formulario de nueva matriz -->
-            <div class="col-md-4">
-                <h4>Agregar nueva matriz</h4>
-                <form method="post" class="card p-3 shadow-sm">
-                    {% csrf_token %}
-                    <input type="hidden" name="crear_matriz" value="1">
+{% block content %}
+{% include 'includes/header.html' %}
+<div class="container mt-3">
+    <h1 class="mb-3">{{ super_matriz.nombre }}</h1>
+    <p class="text-muted">{{ super_matriz.descripcion }}</p>
 
-                    <div class="mb-3">
-                        {{ form.nombre.label_tag }}
-                        {{ form.nombre }}
-                    </div>
+    <a href="{% url 'matrix_app:editar_validates' super_matriz.id %}" class="btn btn btn-success mb-3">Validates</a>
+    <a href="{% url 'matrix_app:tickets_por_levantar' super_matriz.id %}" class="btn btn-success mb-3">tickets por levantar</a>
+    
+    <div class="row mt-5">
+        <div class="col-md-4">
+            <h3>Agregar nueva matriz</h3>
+            <form method="post" class="card p-3 shadow-sm">
+                {% csrf_token %}
+                <input type="hidden" name="crear_matriz" value="1">
 
-                    <div class="mb-3">
-                        {{ form.alcance.label_tag }}
-                        {{ form.alcance }}
-                    </div>
+                <div class="mb-3">
+                    {{ form.nombre.label_tag }}
+                    {{ form.nombre }}
+                </div>
 
-                    <div class="mb-3">
-                        <label for="id_testers" class="form-label">Seleccionar Testers</label>
-                        {{ form.testers }}
-                    </div>
-                    <div class="mb-3">
-                        <label for="id_regiones" class="form-label">Seleccionar Region</label>
-                        {{ form.regiones}}
-                    </div>
+                <div class="mb-3">
+                    {{ form.alcance.label_tag }}
+                    {{ form.alcance }}
+                </div>
 
-                    <button type="submit" class="btn btn-primary w-100">Agregar Matriz</button>
-                </form>
-            </div>
+                <div class="mb-3">
+                    <label for="id_testers" class="form-label">Seleccionar Testers</label>
+                    {{ form.testers }}
+                </div>
+                <div class="mb-3">
+                    <label for="id_regiones" class="form-label">Seleccionar Region</label>
+                    {{ form.regiones}}
+                </div>
 
-            <!-- Grid de matrices -->
-            <div class="col-md-8">
-                <h4>Matrices por región</h4>
-                {% if matrices_info %}
-                <div class="row row-cols-1 row-cols-md-2 g-4 mt-2">
-                    {% for info in matrices_info %}
-                        <div class="col">
-                            <div class="card h-100 shadow-sm">
-                                <div class="card-header bg-primary text-white">
-                                    <h5 class="mb-0">{{ info.matriz.nombre }}</h5>
+                <button type="submit" class="btn btn-dark w-100">Agregar Matriz</button>
+            </form>
+        </div>
+
+        <!-- Grid de matrices -->
+        <div class="col-md-8">
+            <h4>Matrices por región</h4>
+            {% if matrices_info %}
+            <div class="row row-cols-1 row-cols-md-2 g-4 mt-2">
+                {% for info in matrices_info %}
+                    <div class="col">
+                        <div class="card h-100 shadow-sm">
+                            <div class="card-header bg-success text-white">
+                                <h5 class="mb-0">{{ info.matriz.nombre }}</h5>
+                            </div>
+                            <div class="card-body d-flex flex-column">
+                                <p>Casos Totales: {{ info.total_casos }}</p>
+                                <p>Casos Filtrados:{{ info.casos_filtrados }}</p>
+                                <p>Porcentaje:{{ info.porcentaje|floatformat:2 }}%</p>
+
+                                <div class="progress mb-3">
+                                    <div class="progress-bar bg-success" role="progressbar"
+                                         style="width: {{ info.porcentaje }}%;" aria-valuenow="{{ info.porcentaje }}"
+                                         aria-valuemin="0" aria-valuemax="100">
+                                        {{ info.porcentaje|floatformat:0 }}%
+                                    </div>
                                 </div>
-                                <div class="card-body d-flex flex-column">
-                                    <p><strong>Casos Totales:</strong> {{ info.total_casos }}</p>
-                                    <p><strong>Casos Filtrados:</strong> {{ info.casos_filtrados }}</p>
-                                    <p><strong>Porcentaje:</strong> {{ info.porcentaje|floatformat:2 }}%</p>
 
-                                    <div class="progress mb-3">
-                                        <div class="progress-bar bg-success" role="progressbar"
-                                             style="width: {{ info.porcentaje }}%;" aria-valuenow="{{ info.porcentaje }}"
-                                             aria-valuemin="0" aria-valuemax="100">
-                                            {{ info.porcentaje|floatformat:0 }}%
-                                        </div>
-                                    </div>
-
-                                    <div class="mt-auto">
-                                        <a href="{% url 'matrix_app:detalle_matriz' info.matriz.id %}" class="btn btn-outline-info w-100">Ver Matriz</a>
-                                    </div>
+                                <div class="mt-auto">
+                                    <a href="{% url 'matrix_app:detalle_matriz' info.matriz.id %}" class="btn btn-success w-100">Ver Matriz</a>
                                 </div>
                             </div>
                         </div>
-                    {% endfor %}
-                </div>
-                {% else %}
-                    <div class="alert alert-info mt-3">No hay matrices aún.</div>
-                {% endif %}
+                    </div>
+                {% endfor %}
             </div>
+            {% else %}
+                <div class="alert alert-success mt-3">No hay matrices aún.</div>
+            {% endif %}
         </div>
     </div>
-</body>
-</html>
+</div>
+{% endblock content %}

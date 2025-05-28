@@ -1,325 +1,26 @@
-<!-- <!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Nuevo Ticket</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #eef1f7;
-            display: flex;
-            justify-content: center;
-            padding: 40px;
-        }
+{% extends 'base.html' %}
+{% load static %}
 
-        .form-card {
-            width: 100%;
-            max-width: 400px;
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            overflow: hidden;
-        }
+{% block title %}
+Tickets por Levantar - {{ super_matriz.nombre }}
+{% endblock title %}
 
-        .form-header {
-            background-color: #3f51b5;
-            color: white;
-            padding: 10px 15px;
-            font-size: 1.1rem;
-            display: flex;
-            align-items: center;
-        }
+{% block content %}
+{% include 'includes/header.html' %}
+<div class="container-lg">
 
-        .form-header i {
-            margin-right: 8px;
-        }
+    <a href="{% url 'matrix_app:detalle_super_matriz' super_matriz.id %}"
+        class="d-inline-flex align-items-center text-decoration-none btn btn-primary mb-3 mt-3">
+        Volver
+    </a>
 
-        .form-container {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            padding: 15px;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .form-group label {
-            font-size: 0.85rem;
-            margin-bottom: 4px;
-            font-weight: 500;
-        }
-
-        .form-group input,
-        .form-group textarea {
-            padding: 8px;
-            font-size: 0.9rem;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-
-        .form-group textarea {
-            resize: none;
-            heiroup textarea {
-            resize: none;
-            height: 70px;
-        }
-
-        .form-button {
-            display: flex;
-            justify-content: center;
-        }
-
-        .form-button button {
-            background-color: #3f51b5;
-            color: white;
-            padding: 10px 20px;
-            font-size: 0.9rem;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .form-button button:hover {
-            background-color: #303f9f;
-        }
-    </style>
-</head>
-<body>
-
-<div class="form-card">
-    <div class="form-header">
-        <i>➕</i> Nuevo Ticket
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="fw-semibold mb-0">{{ super_matriz.nombre }}</h2>
+        <span class="badge bg-primary rounded-pill">{{ tickets|length }} tickets</span>
     </div>
-    <form class="form-container">
-        <div class="form-group">
-            <label for="tester">Tester</label>
-            <input type="text" id="tester" name="tester">
-        </div>
-
-        <div class="form-group">
-            <label for="ticket_sct">Ticket SCT</label>
-            <input type="text" id="ticket_sct" name="ticket_sct">
-        </div>
-
-        <div class="form-group">
-            <label for="brf">BRF</label>
-            <input type="text" id="brf" name="brf">
-        </div>
-
-        <div class="form-group">
-            <label for="region">Región</label>
-            <input type="text" id="region" name="region">
-        </div>
-
-        <div class="form-group">
-            <label for="prioridad">Prioridad</label>
-            <input type="text" id="prioridad" name="prioridad">
-        </div>
-
-        <div class="form-group">
-            <label for="descripcion">Descripción</label>
-            <textarea id="descripcion" name="descripcion"></textarea>
-        </div>
-
-        <div class="form-group">
-            <label for="notas">Notas</label>
-            <textarea id="notas" name="notas"></textarea>
-        </div>
-
-        <div class="form-group">
-            <label for="url">URL del Ticket</label>
-            <input type="url" id="url" name="url">
-        </div>
-
-        <div class="form-button">
-            <button type="submit">
-                💾 Guardar Ticket
-            </button>
-        </div>
-    </form>
-</div>
-
-</body>
-</html> -->
-
-<!DOCTYPE html>
-<html lang="es">
-
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Tickets por Levantar - {{ super_matriz.nombre }}</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
-    <style>
-        :root {
-            --primary-color: #4361ee;
-            --secondary-color: #3f37c9;
-            --light-color: #f8f9fa;
-            --dark-color: #212529;
-        }
-
-        body {
-            background-color: #f5f7ff;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        .card {
-            border: none;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-        }
-
-        .card-header {
-            background-color: var(--primary-color);
-            color: white;
-            padding: 0.6rem 1rem;
-        }
-
-        .btn-primary {
-            background-color: var(--primary-color);
-            border: none;
-            border-radius: 6px;
-            font-weight: 500;
-        }
-
-        .form-control,
-        .form-select {
-            border-radius: 6px;
-            padding: 0.3rem 0.6rem;
-            font-size: 0.85rem;
-        }
-
-        textarea.form-control {
-            resize: none;
-        }
-
-        .form-floating>label {
-            font-size: 0.75rem;
-            padding: 0.4rem 0.6rem;
-        }
-
-        .form-floating>.form-control,
-        .form-floating>.form-select {
-            height: calc(2.4rem + 2px);
-            min-height: calc(2.4rem + 2px);
-        }
-
-        .form-floating textarea.form-control {
-            height: 4rem;
-            min-height: 4rem;
-        }
-
-        .form-card {
-            width: 100%;
-            max-width: 400px;
-            background-color: white;
-            padding: 0;
-            margin: 0;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-        }
-
-        .form-header {
-            background-color: var(--primary-color);
-            color: white;
-            padding: 10px 15px;
-            font-size: 1.1rem;
-            display: flex;
-            align-items: center;
-        }
-
-        .form-header i {
-            margin-right: 8px;
-        }
-
-        .form-container {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            padding: 15px;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .form-group label {
-            font-size: 0.85rem;
-            margin-bottom: 4px;
-            font-weight: 500;
-        }
-
-        .form-group input,
-        .form-group textarea,
-        .form-group select {
-            padding: 8px;
-            font-size: 0.9rem;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-
-        .form-group textarea {
-            resize: none;
-            height: 70px;
-        }
-
-        .form-button {
-            display: flex;
-            justify-content: center;
-        }
-
-        .form-button button {
-            background-color: #3f51b5;
-            color: white;
-            padding: 10px 20px;
-            font-size: 0.9rem;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .form-button button:hover {
-            background-color: #303f9f;
-        }
-
-        @media (max-width: 768px) {
-            .form-floating {
-                flex-basis: 100% !important;
-            }
-
-            .form-card {
-                max-width: 100%;
-            }
-        }
-    </style>
-</head>
-
-<body class="py-3">
-    <div class="container-lg">
-
-        <a href="{% url 'matrix_app:detalle_super_matriz' super_matriz.id %}"
-            class="d-inline-flex align-items-center text-decoration-none text-primary mb-3">
-            <i class="bi bi-arrow-left-short fs-5 me-1"></i>
-            <span class="fw-medium">Volver</span>
-        </a>
-
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h2 class="fw-semibold mb-0">{{ super_matriz.nombre }}</h2>
-            <span class="badge bg-primary rounded-pill">{{ tickets|length }} tickets</span>
-        </div>
-
-        <div class="row g-3">
-            <!-- Formulario para nuevo ticket -->
+    <div class="view-tickets row g-3">
+        <!-- Formulario para nuevo ticket (más pequeño, lado izquierdo) -->
+        <div class="col-md-4">
             <div class="form-card">
                 <div class="form-header">
                     <i>➕</i> Nuevo Ticket
@@ -327,180 +28,161 @@
                 <form class="form-container" method="POST" action="">
                     {% csrf_token %}
                     {{ form.non_field_errors }}
-
+    
                     <div class="form-group">
                         {{ form.tester.label_tag }}
                         {{ form.tester }}
                         {{ form.tester.errors }}
                     </div>
-
+    
                     <div class="form-group">
                         {{ form.ticket_SCT.label_tag }}
                         {{ form.ticket_SCT }}
                         {{ form.ticket_SCT.errors }}
                     </div>
-
+    
                     <div class="form-group">
                         {{ form.BRF.label_tag }}
                         {{ form.BRF }}
                         {{ form.BRF.errors }}
                     </div>
-
+    
                     <div class="form-group">
                         {{ form.Region.label_tag }}
                         {{ form.Region }}
                         {{ form.Region.errors }}
                     </div>
-
+    
                     <div class="form-group">
                         {{ form.prioridad.label_tag }}
                         {{ form.prioridad }}
                         {{ form.prioridad.errors }}
                     </div>
-
+    
                     <div class="form-group">
                         {{ form.desc.label_tag }}
                         {{ form.desc }}
                         {{ form.desc.errors }}
                     </div>
-
+    
                     <div class="form-group">
                         {{ form.nota.label_tag }}
                         {{ form.nota }}
                         {{ form.nota.errors }}
                     </div>
-
+    
                     <div class="form-group">
                         {{ form.url.label_tag }}
                         {{ form.url }}
                         {{ form.url.errors }}
                     </div>
-
+    
                     <div class="form-button">
-                        <button type="submit">
+                        <button type="submit" class="btn btn-primary w-100">
                             💾 Guardar Ticket
                         </button>
                     </div>
                 </form>
             </div>
-
-            <!-- Lista de tickets existentes -->
-            <div class="col pr-1 m-0">
-                <div class="card">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0 fs-6"><i class="bi bi-ticket-detailed me-2"></i>Tickets Registrados</h5>
-                    </div>
-                    <div class="card-body p-0">
-
-                        <!-- Filtro por Tester -->
-                        <div class="px-3 py-2">
-                            <input type="text" id="searchTester" class="form-control form-control-sm"
-                                placeholder="Filtrar por Tester..." />
-                        </div>
-
-                        {% if tickets %}
-                        <div class="table-responsive">
-                            <table class="table table-striped table-hover mb-0" id="ticketsTable">
-                                <thead>
-                                    <tr>
-                                        <th width="15%">Tester</th>
-                                        <th width="12%">Ticket</th>
-                                        <th width="15%">Descripción</th>
-                                        <th width="10%">Prioridad</th>
-                                        <th width="10%">Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for ticket in tickets %}
-                                    <tr>
-                                        <td>{{ ticket.tester }}</td>
-                                        <td>{{ ticket.ticket_SCT }}</td>
-                                        <td class="text-truncate" style="max-width: 200px;" title="{{ ticket.desc }}">
-                                            {{ ticket.desc }}
-                                        </td>
-                                        <td>
-                                            {% if ticket.prioridad == 'Bloqueante' %}
-                                            <span class="badge bg-danger">Bloqueante</span>
-                                            {% else %}
-                                            <span class="badge bg-warning text-dark">Crítico</span>
-                                            {% endif %}
-                                        </td>
-                                        <td>
-                                            <div class="d-flex gap-1">
-                                                {% if ticket.url %}
-                                                <a href="{{ ticket.url }}" target="_blank"
-                                                    class="btn btn-sm btn-outline-primary" title="Ir al ticket">
-                                                    <i class="bi bi-box-arrow-up-right"></i>
-                                                </a>
+        </div>
+    
+        <!-- Lista de tickets (más ancho, lado derecho) -->
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 fs-6">
+                        <i class="bi bi-ticket-detailed me-2"></i>Tickets Registrados
+                    </h5>
+                </div>
+                <div class="card-body p-2">
+                    {% if tickets %}
+                        <div class="list-group">
+                            {% for ticket in tickets %}
+                                <div class="list-group-item mb-2">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div>
+                                            <h6 class="mb-1">{{ ticket.tester }}</h6>
+                                            <p class="mb-1">Ticket SCT: {{ ticket.ticket_SCT|default_if_none:"-" }}</p>
+                                            <p class="mb-1">BRF: {{ ticket.BRF|default_if_none:"-" }}</p>
+                                            <p class="mb-1">Región: {{ ticket.Region }}</p>
+                                            <p class="mb-1">Prioridad:
+                                                {% if ticket.prioridad == 'Bloqueante' %}
+                                                    <span class="badge bg-danger">Bloqueante</span>
+                                                {% else %}
+                                                    <span class="badge bg-warning text-dark">Crítico</span>
                                                 {% endif %}
-                                                <button class="btn btn-sm btn-outline-secondary" title="Ver detalles"
-                                                    data-bs-toggle="modal" data-bs-target="#ticketModal{{ ticket.id }}">
-                                                    <i class="bi bi-eye"></i>
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-
-                                    <!-- Modal para detalles del ticket -->
-                                    <div class="modal fade modal-simple" id="ticketModal{{ ticket.id }}" tabindex="-1"
-                                        aria-hidden="true">
-                                        <div class="modal-dialog modal-dialog-centered">
-                                            <div class="modal-content">
+                                            </p>
+                                            <p class="mb-1">Descripción: {{ ticket.desc }}</p>
+                                            <p class="mb-1">Notas: {{ ticket.nota }}</p>
+                                            {% if ticket.url %}
+                                                <p class="mb-1">URL: <a href="{{ ticket.url }}" target="_blank">{{ ticket.url }}</a></p>
+                                            {% endif %}
+                                        </div>
+                                        <button class="btn btn-sm btn-outline-primary" title="Editar"
+                                            data-bs-toggle="modal" data-bs-target="#editModal{{ ticket.id }}">
+                                            Editar Ticket
+                                        </button>
+                                    </div>
+                                </div>
+    
+                                <!-- Modal de edición -->
+                                <div class="modal fade" id="editModal{{ ticket.id }}" tabindex="-1" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <form method="post" action="{% url 'matrix_app:editar_ticket' ticket.id %}">
+                                                {% csrf_token %}
                                                 <div class="modal-header">
-                                                    <h6 class="modal-title">Detalles del Ticket</h6>
+                                                    <h5 class="modal-title">Editar Ticket #{{ ticket.id }}</h5>
                                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                         aria-label="Cerrar"></button>
                                                 </div>
                                                 <div class="modal-body">
-                                                    <div class="mb-2"><strong>Tester:</strong> {{ ticket.tester }}</div>
-                                                    <div class="mb-2"><strong>Ticket SCT:</strong> {{ ticket.ticket_SCT }}</div>
-                                                    <div class="mb-2"><strong>BRF:</strong> {{ ticket.BRF }}</div>
-                                                    <div class="mb-2"><strong>Región:</strong> {{ ticket.Region }}</div>
-                                                    <div class="mb-2"><strong>Prioridad:</strong> {{ ticket.prioridad }}</div>
-                                                    <div class="mb-2"><strong>Descripción:</strong> {{ ticket.desc }}</div>
-                                                    <div class="mb-2"><strong>Notas:</strong> {{ ticket.nota }}</div>
-                                                    {% if ticket.url %}
-                                                    <div class="mb-2">
-                                                        <strong>URL:</strong>
-                                                        <a href="{{ ticket.url }}" target="_blank">{{ ticket.url }}</a>
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Ticket SCT</label>
+                                                        <input type="text" name="ticket_SCT" class="form-control"
+                                                            value="{{ ticket.ticket_SCT|default_if_none:'' }}">
                                                     </div>
-                                                    {% endif %}
+                                                    <div class="mb-3">
+                                                        <label class="form-label">BRF</label>
+                                                        <input type="text" name="BRF" class="form-control"
+                                                            value="{{ ticket.BRF|default_if_none:'' }}">
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Descripción</label>
+                                                        <textarea name="desc" class="form-control"
+                                                            rows="2">{{ ticket.desc }}</textarea>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Nota</label>
+                                                        <textarea name="nota" class="form-control"
+                                                            rows="2">{{ ticket.nota }}</textarea>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label">URL</label>
+                                                        <input type="url" name="url" class="form-control"
+                                                            value="{{ ticket.url|default_if_none:'' }}">
+                                                    </div>
                                                 </div>
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-secondary"
-                                                        data-bs-dismiss="modal">Cerrar</button>
+                                                        data-bs-dismiss="modal">Cancelar</button>
+                                                    <button type="submit" class="btn btn-primary">Guardar cambios</button>
                                                 </div>
-                                            </div>
+                                            </form>
                                         </div>
                                     </div>
-
-                                    {% endfor %}
-                                </tbody>
-                            </table>
+                                </div>
+                            {% endfor %}
                         </div>
-                        {% else %}
+                    {% else %}
                         <p class="text-center m-3">No hay tickets registrados aún.</p>
-                        {% endif %}
-                    </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
     </div>
+    
 
-    <!-- Bootstrap JS Bundle con Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-    <script>
-        // Filtrado simple por tester
-        document.getElementById('searchTester').addEventListener('input', function () {
-            const filter = this.value.toLowerCase();
-            const rows = document.querySelectorAll('#ticketsTable tbody tr');
-            rows.forEach(row => {
-                const testerCell = row.querySelector('td:first-child').textContent.toLowerCase();
-                row.style.display = testerCell.includes(filter) ? '' : 'none';
-            });
-        });
-    </script>
-</body>
-
-</html>
+    
+</div>
+{% endblock content %}

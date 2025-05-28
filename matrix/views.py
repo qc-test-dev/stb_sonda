@@ -10,7 +10,7 @@ from .forms import (
 )
 from .models import SuperMatriz, Matriz, Validate,TicketPorLevantar
 from .utils import importar_validates_desde_excel,importar_matriz_desde_excel
-
+from django.urls import reverse
 
 def super_matriz_dashboard(request):
     super_matrices = SuperMatriz.objects.all()
@@ -83,8 +83,8 @@ def detalle_super_matriz(request, super_matriz_id):
                 random.shuffle(testers_seleccionados)
                 random.shuffle(casos)
                 for idx, caso in enumerate(casos):
-                    caso.nota = testers_seleccionados[idx % len(testers_seleccionados)] if testers_seleccionados else ''
-                    caso.nota+='-'+regiones_seleccionados[idx % len(regiones_seleccionados)] if regiones_seleccionados else ''
+                    caso.tester = testers_seleccionados[idx % len(testers_seleccionados)] if testers_seleccionados else ''
+                    caso.tester+='-'+regiones_seleccionados[idx % len(regiones_seleccionados)] if regiones_seleccionados else ''
                     caso.save()
 
                 return redirect('matrix_app:detalle_super_matriz', super_matriz_id=super_matriz.id)
@@ -118,12 +118,12 @@ def detalle_matriz(request, matriz_id):
         alcances_lista = matriz.alcances_utilizados.split(',')
 
     # Obtener lista única de testers desde los casos
-    testers_disponibles = casos_de_prueba.values_list('nota', flat=True).distinct()
+    testers_disponibles = casos_de_prueba.values_list('tester', flat=True).distinct()
 
     # Filtrar por tester si viene en la URL (GET)
     tester_filtrado = request.GET.get('tester')
     if tester_filtrado:
-        casos_de_prueba = casos_de_prueba.filter(nota=tester_filtrado)
+        casos_de_prueba = casos_de_prueba.filter(tester=tester_filtrado)
 
     if request.method == 'POST':
         success = True
@@ -218,4 +218,18 @@ def tickets_por_levantar_view(request, super_matriz_id):
         'tickets': tickets,
         'form': form,
     })
+
+def editar_ticket(request, ticket_id):
+    ticket = get_object_or_404(TicketPorLevantar, id=ticket_id)
+
+    if request.method == 'POST':
+        ticket.ticket_SCT = request.POST.get('ticket_SCT', '').strip()
+        ticket.BRF = request.POST.get('BRF', '').strip()
+        ticket.desc = request.POST.get('desc', '').strip()
+        ticket.nota = request.POST.get('nota', '').strip()
+        ticket.url = request.POST.get('url', '').strip()
+        ticket.save()
+        
+        # Redirige a la página de lista de tickets de la supermatriz
+        return redirect(reverse('matrix_app:detalle_tickets', args=[ticket.super_matriz.id]))
 

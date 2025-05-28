@@ -104,15 +104,12 @@ def importar_validates_desde_excel(super_matriz, ruta_excel):
     Importa registros de 'Validate' desde un archivo Excel y los asigna a una SuperMatriz.
     Las filas incompletas (sin tester, ticket, descripcion, prioridad o estado) se ignoran.
     """
-    print(f"Importando validates desde: {ruta_excel}")
     wb = openpyxl.load_workbook(ruta_excel)
     sheet = wb.active
 
     empty_rows = 0
 
     for fila in sheet.iter_rows(min_row=2, values_only=True):
-        print(f"Fila leída: {fila}")
-
         if all(cell is None for cell in fila):
             empty_rows += 1
             if empty_rows > 5:
@@ -140,7 +137,6 @@ def importar_validates_desde_excel(super_matriz, ruta_excel):
             prioridad=prioridad,
             estado=estado
         )
-        #print(f"Validate creado: {tester}")
 def copiar_casos_filtrados(matriz, ruta_excel, alcance_lista):
     df = pd.read_excel(ruta_excel)
     df_filtrado = df[df['Alcance Evaluación'].isin(alcance_lista)]

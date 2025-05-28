@@ -1,0 +1,12 @@
+<div class="header">
+    <h1>Matriz de Validacion</h1>
+    <div class="group-btn">
+        <a href="{% url 'home' %}" class="home-btn">Home</a>
+    <form method="post" action="{% url 'logout' %}">
+        {% csrf_token %}
+        
+        <button type="submit" class="logout-btn">Cerrar sesión</button>
+    </form>
+    </div>
+    
+</div>

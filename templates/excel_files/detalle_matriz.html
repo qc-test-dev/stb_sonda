@@ -1,100 +1,12 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>{{ matriz.nombre }}</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background-color: #f8f9fa;
-            color: #212529;
-            font-size: 1.1rem;
-        }
+{% extends 'base.html' %}
+{% load static %}
 
-        .container {
-            max-width: 900px;
-        }
+{% block title %}
+{{ matriz.nombre }}
+{% endblock title %}
 
-        .card {
-            border: 1px solid #dee2e6;
-            border-radius: 0.5rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .card-header {
-            background-color: #e9ecef;
-            border-bottom: 1px solid #dee2e6;
-            font-weight: 700;
-            font-size: 1.2rem;
-        }
-
-        .form-label {
-            font-weight: 700;
-        }
-
-        .badge {
-            font-size: 0.9rem;
-            border-radius: 0.5rem;
-        }
-
-        /* Colores personalizados para estados */
-        .estado-funciona {
-            background-color: #d4edda !important;
-            color: #155724 !important;
-        }
-
-        .estado-falla-nueva {
-            background-color: #c82333 !important;
-            color: white !important;
-        }
-
-        .estado-falla-persistente {
-            background-color: #f8d7da !important;
-            color: #721c24 !important;
-        }
-
-        .estado-na {
-            background-color: #e2e3e5 !important;
-            color: #004085 !important;
-        }
-
-        .estado-pendiente {
-            background-color: #fd7e14 !important;
-            color: white !important;
-        }
-
-        .estado-por-ejecutar {
-            background-color: #ffeeba !important;
-            color: #856404 !important;
-        }
-
-        .sticky-action-bar {
-            position: fixed;
-            bottom: 20px;
-            right: 30px;
-            z-index: 1050;
-            display: flex;
-            gap: 10px;
-        }
-
-        .sticky-action-bar button,
-        .sticky-action-bar a {
-            font-size: 1rem;
-            font-weight: 600;
-            padding: 0.6rem 1.2rem;
-            border-radius: 0.5rem;
-        }
-
-        .alert-position {
-            position: fixed;
-            bottom: 80px;
-            right: 30px;
-            z-index: 1100;
-        }
-
-    </style>
-</head>
-<body class="py-4">
+{% block content %}
+{% include 'includes/header.html' %}
 <div class="container">
 
     <!-- Título -->
@@ -104,7 +16,14 @@
         <p>Filtros usados:</p>
         <ul>
         {% for alcance in alcances_lista %}
-            <li>{{ alcance }}</li>
+        {% if alcance == "A" %}
+        Minimum Viable Product 
+        {% elif alcance == "B" %}
+            SMOKE TEST
+        {% elif alcance == "C" %}
+            No Afectacion
+        {% endif %}
+        <br>
         {% endfor %}
         </ul>
     {% else %}
@@ -130,36 +49,40 @@
 
     <form id="form-casos" method="post">
         {% csrf_token %}
-        {% for caso, form in formularios_casos_de_prueba %}
-            <div class="card">
-                <div class="card-header">
-                    {{ caso.fase }} — {{ caso.caso_de_prueba }}
-                </div>
-                <div class="card-body">
-                    <div class="mb-3">
-                        <label class="form-label">Estado</label>
-                        {{ form.estado }}
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Criticidad</label>
-                        {% if caso.criticidad|lower == "bloqueante" %}
-                            <span class="badge bg-danger">🔶 Bloqueante</span>
-                        {% elif caso.criticidad|lower == "critico" or caso.criticidad|lower == "crítico" %}
-                            <span class="badge bg-warning text-dark">🟡 Crítico</span>
-                        {% elif caso.criticidad|lower == "error" %}
-                            <span class="badge bg-danger">🔴 Error</span>
-                        {% else %}
-                            <span class="badge bg-secondary">Sin clasificar</span>
-                        {% endif %}
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Nota</label>
-                        {{ form.nota }}
-                    </div>
-                </div>
-            </div>
-        {% endfor %}
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th class="col-fase">Fase</th>
+                    <th class="col-caso">Caso de Prueba</th>
+                    <th class="col-estado">Estado</th>
+                    <th class="col-criticidad">Criticidad</th>
+                    <th class="col-nota">Nota</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for caso, form in formularios_casos_de_prueba %}
+                    <tr>
+                        <td>{{ caso.fase }}</td>
+                        <td>{{ caso.caso_de_prueba }}</td>
+                        <td>{{ form.estado }}</td>
+                        <td>    
+                            {% if caso.criticidad|lower == "bloqueante" %}
+                                <span class="badge bg-danger">🔶 Bloqueante</span>
+                            {% elif caso.criticidad|lower == "critico" or caso.criticidad|lower == "crítico" %}
+                                <span class="badge bg-warning text-dark">🟡 Crítico</span>
+                            {% elif caso.criticidad|lower == "error" %}
+                                <span class="badge bg-danger">🔴 Error</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Sin clasificar</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ form.nota }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </form>
+    
 
     <div class="sticky-action-bar">
         <button type="submit" class="btn btn-success" form="form-casos">
@@ -175,84 +98,4 @@
     </div>
 
 </div>
-
-<script>
-    function actualizarColorSelect(select) {
-        const valor = select.value;
-        select.classList.remove(
-            'estado-funciona', 'estado-falla-nueva', 'estado-falla-persistente',
-            'estado-na', 'estado-pendiente', 'estado-por-ejecutar'
-        );
-        switch (valor) {
-            case 'funciona':
-                select.classList.add('estado-funciona');
-                break;
-            case 'falla_nueva':
-                select.classList.add('estado-falla-nueva');
-                break;
-            case 'falla_persistente':
-                select.classList.add('estado-falla-persistente');
-                break;
-            case 'na':
-                select.classList.add('estado-na');
-                break;
-            case 'pendiente':
-                select.classList.add('estado-pendiente');
-                break;
-            case 'por_ejecutar':
-                select.classList.add('estado-por-ejecutar');
-                break;
-        }
-    }
-
-    document.querySelectorAll('.estado-select').forEach(function (select) {
-        actualizarColorSelect(select);
-        select.addEventListener('change', function () {
-            actualizarColorSelect(select);
-        });
-    });
-
-    function enviarFormulario() {
-        const form = document.getElementById('form-casos');
-        const formData = new FormData(form);
-
-        fetch(window.location.href, {
-            method: 'POST',
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest',
-            },
-            body: formData,
-            credentials: 'same-origin'
-        })
-        .then(response => {
-            if (!response.ok) throw new Error('Error en la petición');
-            return response.text();
-        })
-        .then(data => {
-            const mensaje = document.getElementById('mensaje');
-            mensaje.classList.remove('d-none', 'alert-danger');
-            mensaje.classList.add('alert-success');
-            mensaje.textContent = 'Cambios guardados automáticamente.';
-            setTimeout(() => mensaje.classList.add('d-none'), 3000);
-        })
-        .catch(error => {
-            const mensaje = document.getElementById('mensaje');
-            mensaje.classList.remove('d-none', 'alert-success');
-            mensaje.classList.add('alert-danger');
-            mensaje.textContent = '❌ Error al guardar automáticamente.';
-            console.error(error);
-        });
-    }
-
-    document.getElementById('form-casos').addEventListener('submit', function(event){
-        event.preventDefault();
-        enviarFormulario();
-    });
-
-    // Guardado automático cada 15 segundos (15000 ms)
-    setInterval(() => {
-        enviarFormulario();
-    }, 15000);
-</script>
-</body>
-</html>
+{% endblock content %}
