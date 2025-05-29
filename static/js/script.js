@@ -86,3 +86,30 @@ setInterval(() => {
             row.style.display = testerCell.includes(filter) ? '' : 'none';
         });
     });
+
+// Funciones sobre 
+// El templade editar validates
+// Función para actualizar el color del select según el valor del estado
+function actualizarColorSelect(select) {
+    const valor = select.value;
+    select.classList.remove(
+        'estado-funciona', 'estado-falla-nueva', 'estado-falla-persistente',
+        'estado-na', 'estado-pendiente', 'estado-por-ejecutar'
+    );
+    switch (valor) {
+        case 'funciona': select.classList.add('estado-funciona'); break;
+        case 'falla_nueva': select.classList.add('estado-falla-nueva'); break;
+        case 'falla_persistente': select.classList.add('estado-falla-persistente'); break;
+        case 'na': select.classList.add('estado-na'); break;
+        case 'pendiente': select.classList.add('estado-pendiente'); break;
+        case 'por_ejecutar': select.classList.add('estado-por-ejecutar'); break;
+    }
+}
+
+// Aplicar color inicial a cada select de estado
+document.querySelectorAll('.estado-select').forEach(function (select) {
+    actualizarColorSelect(select);
+    select.addEventListener('change', function () {
+        actualizarColorSelect(select);
+    });
+});

@@ -64,7 +64,7 @@ class TicketPorLevantar(models.Model):
     def __str__(self):
         return f"{self.tester} - {self.ticket_SCT}"
 class DetallesValidate(models.Model):
-    super_matriz = models.OneToOneField(SuperMatriz, on_delete=models.CASCADE, related_name='detalles_validate')
+    super_matriz = models.OneToOneField(SuperMatriz, on_delete=models.CASCADE, related_name='detalles_validate')   
     filtro_RN = models.CharField(max_length=255,blank=True, null=True)
     comentario_RN = models.TextField(blank=True, null=True)
 

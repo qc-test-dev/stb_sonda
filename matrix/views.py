@@ -8,36 +8,14 @@ from .forms import (
     ValidateForm, ValidateEstadoForm, DetallesValidateForm,
     TicketPorLevantarForm
 )
-from .models import SuperMatriz, Matriz, Validate,TicketPorLevantar
-from .utils import importar_validates_desde_excel,importar_matriz_desde_excel
+from .models import SuperMatriz, Matriz, Validate,TicketPorLevantar,DetallesValidate
+from .utils import importar_matriz_desde_excel,importar_validates
 from django.urls import reverse
-
-def super_matriz_dashboard(request):
-    super_matrices = SuperMatriz.objects.all()
-
-    if request.method == 'POST':
-        form = SuperMatrizForm(request.POST)
-        if form.is_valid():
-            super_matriz = form.save()
-
-            ruta_excel_validates = os.path.join('static', 'excel_files', 'validates.xlsx')
-            importar_validates_desde_excel(super_matriz, ruta_excel_validates)
-
-            return redirect('matrix_app:detalles_validate_modal', super_matriz_id=super_matriz.id)
-    else:
-        form = SuperMatrizForm()
-
-    return render(request, 'excel_files/super_matriz_dashboard.html', {
-        'form': form,
-        'super_matrices': super_matrices
-    })
-
 
 def detalle_super_matriz(request, super_matriz_id):
     super_matriz = get_object_or_404(SuperMatriz, id=super_matriz_id)
     matrices = super_matriz.matrices.all()
     validates = super_matriz.validates.all()
-    tickets = super_matriz.tickets_por_levantar.all()
 
     matrices_info = []
     for matriz in matrices:
@@ -162,7 +140,12 @@ def editar_validates(request, super_matriz_id):
     super_matriz = get_object_or_404(SuperMatriz, id=super_matriz_id)
     validates = Validate.objects.filter(super_matriz=super_matriz)
 
+    detalles_validate = getattr(super_matriz, 'detalles_validate', None)
+
     formularios = []
+
+    # Extraemos testers únicos (sin repetir)
+    testers = validates.values_list('tester', flat=True).distinct()
 
     if request.method == 'POST':
         for validate in validates:
@@ -177,27 +160,39 @@ def editar_validates(request, super_matriz_id):
 
     return render(request, 'excel_files/editar_validates.html', {
         'super_matriz': super_matriz,
-        'formularios_validates': formularios
+        'formularios_validates': formularios,
+        'detalles_validate': detalles_validate,
+        'testers': testers,  # <<< aquí está
     })
+
 
 
 def detalles_validate_modal(request, super_matriz_id):
     super_matriz = get_object_or_404(SuperMatriz, id=super_matriz_id)
 
+    # Obtén o inicializa el detalle asociado
+    detalles, _ = DetallesValidate.objects.get_or_create(super_matriz=super_matriz)
+
     if request.method == 'POST':
-        form = DetallesValidateForm(request.POST)
-        if form.is_valid(): 
+        form = DetallesValidateForm(request.POST, instance=detalles)
+        link = request.POST.get('filtro_RN', '')
+        
+        if form.is_valid():
             detalles = form.save(commit=False)
             detalles.super_matriz = super_matriz
             detalles.save()
+            if not Validate.objects.filter(super_matriz=super_matriz).exists():
+                importar_validates(super_matriz, link)
+
             return redirect('matrix_app:detalle_super_matriz', super_matriz_id=super_matriz.id)
     else:
-        form = DetallesValidateForm()
+        form = DetallesValidateForm(instance=detalles)
 
     return render(request, 'excel_files/detalles_validate_modal.html', {
         'form': form,
         'super_matriz': super_matriz
     })
+
 
 def tickets_por_levantar_view(request, super_matriz_id):
     super_matriz = get_object_or_404(SuperMatriz, id=super_matriz_id)

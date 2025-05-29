@@ -3,7 +3,8 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from matrix.models import SuperMatriz
 from matrix.forms import SuperMatrizForm
-from matrix.utils import importar_validates_desde_excel
+
+#from matrix.utils import importar_validates_desde_excel
 import os
 @login_required
 def home(request):
@@ -18,8 +19,8 @@ def home(request):
         if form.is_valid():
             super_matriz = form.save()
 
-            ruta_excel_validates = os.path.join('static', 'excel_files', 'validates.xlsx')
-            importar_validates_desde_excel(super_matriz, ruta_excel_validates)
+            #ruta_excel_validates = os.path.join('static', 'excel_files', 'validates.xlsx')
+            #importar_validates(super_matriz,link)
 
             return redirect('matrix_app:detalles_validate_modal', super_matriz_id=super_matriz.id)
     else:
