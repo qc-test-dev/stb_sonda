@@ -226,5 +226,5 @@ def editar_ticket(request, ticket_id):
         ticket.save()
         
         # Redirige a la página de lista de tickets de la supermatriz
-        return redirect(reverse('matrix_app:detalle_tickets', args=[ticket.super_matriz.id]))
+        return redirect('matrix_app:tickets_por_levantar', super_matriz_id=ticket.super_matriz.id)
 

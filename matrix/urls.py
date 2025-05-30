@@ -9,6 +9,7 @@ urlpatterns = [
     path('detalles_validate_modal/<int:super_matriz_id>/', views.detalles_validate_modal, name='detalles_validate_modal'),# Esta es la URL para detalle_matriz
     path('super_matriz/<int:super_matriz_id>/tickets/', views.tickets_por_levantar_view, name='tickets_por_levantar'),
     path('editar_ticket/<int:ticket_id>/', views.editar_ticket, name='editar_ticket'),
-]
+    
+]   
 
 

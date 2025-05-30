@@ -19,7 +19,7 @@ Tickets por Levantar - {{ super_matriz.nombre }}
         <span class="badge bg-primary rounded-pill">{{ tickets|length }} tickets</span>
     </div>
     <div class="view-tickets row g-3">
-        <!-- Formulario para nuevo ticket (más pequeño, lado izquierdo) -->
+        <!-- Formulario para nuevo ticket (lado izquierdo) -->
         <div class="col-md-4">
             <div class="form-card">
                 <div class="form-header">
@@ -28,55 +28,55 @@ Tickets por Levantar - {{ super_matriz.nombre }}
                 <form class="form-container" method="POST" action="">
                     {% csrf_token %}
                     {{ form.non_field_errors }}
-    
+
                     <div class="form-group">
                         {{ form.tester.label_tag }}
                         {{ form.tester }}
                         {{ form.tester.errors }}
                     </div>
-    
+
                     <div class="form-group">
                         {{ form.ticket_SCT.label_tag }}
                         {{ form.ticket_SCT }}
                         {{ form.ticket_SCT.errors }}
                     </div>
-    
+
                     <div class="form-group">
                         {{ form.BRF.label_tag }}
                         {{ form.BRF }}
                         {{ form.BRF.errors }}
                     </div>
-    
+
                     <div class="form-group">
                         {{ form.Region.label_tag }}
                         {{ form.Region }}
                         {{ form.Region.errors }}
                     </div>
-    
+
                     <div class="form-group">
                         {{ form.prioridad.label_tag }}
                         {{ form.prioridad }}
                         {{ form.prioridad.errors }}
                     </div>
-    
+
                     <div class="form-group">
                         {{ form.desc.label_tag }}
                         {{ form.desc }}
                         {{ form.desc.errors }}
                     </div>
-    
+
                     <div class="form-group">
                         {{ form.nota.label_tag }}
                         {{ form.nota }}
                         {{ form.nota.errors }}
                     </div>
-    
+
                     <div class="form-group">
                         {{ form.url.label_tag }}
                         {{ form.url }}
                         {{ form.url.errors }}
                     </div>
-    
+
                     <div class="form-button">
                         <button type="submit" class="btn btn-primary w-100">
                             💾 Guardar Ticket
@@ -85,8 +85,8 @@ Tickets por Levantar - {{ super_matriz.nombre }}
                 </form>
             </div>
         </div>
-    
-        <!-- Lista de tickets (más ancho, lado derecho) -->
+
+        <!-- Lista de tickets (compacto, lado derecho) -->
         <div class="col-md-8">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
@@ -96,35 +96,41 @@ Tickets por Levantar - {{ super_matriz.nombre }}
                 </div>
                 <div class="card-body p-2">
                     {% if tickets %}
-                        <div class="list-group">
+                        <div class="list-group list-group-flush">
                             {% for ticket in tickets %}
-                                <div class="list-group-item mb-2">
-                                    <div class="d-flex justify-content-between align-items-start">
+                                <div class="list-group-item py-2 px-2">
+                                    <div class="d-flex justify-content-between align-items-center">
                                         <div>
-                                            <h6 class="mb-1">{{ ticket.tester }}</h6>
-                                            <p class="mb-1">Ticket SCT: {{ ticket.ticket_SCT|default_if_none:"-" }}</p>
-                                            <p class="mb-1">BRF: {{ ticket.BRF|default_if_none:"-" }}</p>
-                                            <p class="mb-1">Región: {{ ticket.Region }}</p>
-                                            <p class="mb-1">Prioridad:
-                                                {% if ticket.prioridad == 'Bloqueante' %}
-                                                    <span class="badge bg-danger">Bloqueante</span>
-                                                {% else %}
-                                                    <span class="badge bg-warning text-dark">Crítico</span>
-                                                {% endif %}
-                                            </p>
-                                            <p class="mb-1">Descripción: {{ ticket.desc }}</p>
-                                            <p class="mb-1">Notas: {{ ticket.nota }}</p>
-                                            {% if ticket.url %}
-                                                <p class="mb-1">URL: <a href="{{ ticket.url }}" target="_blank">{{ ticket.url }}</a></p>
-                                            {% endif %}
+                                            <strong>{{ ticket.tester }}</strong>
+                                            <span class="badge 
+                                                {% if ticket.prioridad == 'Bloqueante' %} bg-danger 
+                                                {% else %} bg-warning text-dark {% endif %} ms-2">
+                                                {{ ticket.prioridad }}
+                                            </span>
                                         </div>
                                         <button class="btn btn-sm btn-outline-primary" title="Editar"
                                             data-bs-toggle="modal" data-bs-target="#editModal{{ ticket.id }}">
-                                            Editar Ticket
+                                            ✏️
                                         </button>
                                     </div>
+                                    <small class="text-muted">#{{ ticket.ticket_SCT|default_if_none:"Sin SCT" }}</small>
+                                    <div class="small">
+                                        BRF: {{ ticket.BRF|default_if_none:"-" }} |
+                                        Región: {{ ticket.Region|default_if_none:"-" }}
+                                    </div>
+                                    <div class="small">
+                                        Descripción: {{ ticket.desc|truncatechars:80 }}
+                                    </div>
+                                    <div class="small">
+                                        Nota: {{ ticket.nota|truncatechars:80|default_if_none:"-" }}
+                                    </div>
+                                    {% if ticket.url %}
+                                        <div>
+                                            <a href="{{ ticket.url }}" target="_blank" class="small text-decoration-underline">🔗 Ver URL</a>
+                                        </div>
+                                    {% endif %}
                                 </div>
-    
+
                                 <!-- Modal de edición -->
                                 <div class="modal fade" id="editModal{{ ticket.id }}" tabindex="-1" aria-hidden="true">
                                     <div class="modal-dialog">
@@ -175,14 +181,12 @@ Tickets por Levantar - {{ super_matriz.nombre }}
                             {% endfor %}
                         </div>
                     {% else %}
-                        <p class="text-center m-3">No hay tickets registrados aún.</p>
+                        <p class="text-center m-3 small">No hay tickets registrados aún.</p>
                     {% endif %}
                 </div>
             </div>
         </div>
     </div>
-    
 
-    
 </div>
 {% endblock content %}
