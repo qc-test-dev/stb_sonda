@@ -14,18 +14,19 @@ from django.contrib import messages
 import json
 
 # Datos de STBs (hardcodeados por ahora)
+# Datos de STBs (formato dict con name, ip, red)
 stbs = [
-    {"name": "ZTE B866V2", "ip": "192.168.0.108"},
-    {"name": "ZTE B866V2", "ip": "localhost"},
-    {"name": "STB 1", "ip": "172.16.205.62"},
-    {"name": "STB 2", "ip": "172.16.216.5"},
-    {"name": "STB 3", "ip": "172.16.208.1"},
-    {"name": "STB 4", "ip": "172.16.220.3"},
-    {"name": "STB 5", "ip": "172.16.201.3"},
-    {"name": "STB 6", "ip": "172.16.215.14"},
-    {"name": "STB 7", "ip": "172.16.200.5"},
-    {"name": "STB 7", "ip": "172.16.200.14"},
+    {"name": "STB SEI800AMXAR", "ip": "172.16.215.14", "red": "GUA_UAT"},
+    {"name": "SAGECOM VSB3918", "ip": "172.16.208.1", "red": "PERU_UAT"},
+    {"name": "SAGECOM VSB3918", "ip": "172.16.200.14", "red": "PERU_PROD"},
+    {"name": "ZTE V2", "ip": "172.16.205.62", "red": "ARG_PRO"},
+    {"name": "ZTE V2", "ip": "172.16.216.3", "red": "DOM_UAT"},
+    {"name": "ZTE V2", "ip": "172.16.204.33", "red": "ARG_UAT"},
+    {"name": "ZTE V2", "ip": "172.16.220.3", "red": "SAL_UAT"},
+    {"name": "ZTE V2", "ip": "172.16.201.3", "red": "ECU_UAT"},
+
 ]
+
 
 
 def check_device_connected(ip):
