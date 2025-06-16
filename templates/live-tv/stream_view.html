@@ -145,7 +145,11 @@
     <div class="stream-container">
         <div class="iframe-wrapper">
             <iframe 
+<<<<<<< HEAD
                 src="http://10.7.1.201:8000/#!action=stream&udid={{ stb.ip|urlencode }}%3A5555&player=&ws=ws%3A%2F%2F10.7.1.201%3A8000%2F%3Faction%3Dproxy-adb%26remote%3Dtcp%253A8886%26udid%3D{{ stb.ip|urlencode }}%253A5555"
+=======
+                src="http://{{ host }}:8000/#!action=stream&udid={{ stb.ip|urlencode }}%3A5555&player=broadway&ws=ws%3A%2F%2F{{ host }}%3A8000%2F%3Faction%3Dproxy-adb%26remote%3Dtcp%253A8886%26udid%3D{{ stb.ip|urlencode }}%253A5555"
+>>>>>>> dab64d1 (ok)
                 allowfullscreen>
             </iframe>
         </div>
