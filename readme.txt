@@ -37,3 +37,8 @@ Alberto/Luis
 
 Luis
 2- luis crear nueva apk web en este proyecto para manuales de instalacion FW, APK, para todas las marcas de STB y TV
+
+
+## Licencia
+
+Este proyecto está licenciado bajo los términos de la licencia MIT. Consulta el archivo [LICENSE](./LICENSE) para más detalles.
